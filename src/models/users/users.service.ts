@@ -6,6 +6,7 @@ import { UserResetPasswordDto } from "./dtos/user-reset-password.dto";
 import { PasswordService } from "./password.service";
 import { AddressesService } from "./addresses.service";
 import { Address } from "./entities/address.entity";
+import { UpdateUserWithAddressDto } from "./dtos/update-user-with-address.dto";
 
 @Injectable()
 export class UsersService {
@@ -55,6 +56,39 @@ export class UsersService {
     async update(id: string, data: Partial<User>) {
         await this.usersRepository.update(id, data);
         return this.getById(id);
+    }
+
+    async updateUserWithAddress(
+        userId: string,
+        data: UpdateUserWithAddressDto,
+    ) {
+        const user = await this.getById(userId);
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        await this.update(user.id, {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            phoneNumber: data.phoneNumber,
+            email: data.email,
+        });
+
+        await this.addressesService.createOrUpdate(
+            {
+                state: data.state,
+                country: data.country,
+                city: data.city,
+                street: data.street,
+                house: data.house,
+                flat: data.flat,
+                floor: data.floor,
+            },
+            user,
+        );
+
+        return this.getById(userId);
     }
 
     async createAddressOrUpdateAddress(user: User, data: Partial<Address>) {

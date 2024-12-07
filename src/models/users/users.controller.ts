@@ -29,6 +29,7 @@ import { AdminGuard } from "@/common/guards/admin.guard";
 import { createApiOkResponse } from "@/common/interfaces/responses/api-response";
 import { UserUpdateDto } from "./dtos/user-update.dto";
 import { AddressCreateOrUpdateDto } from "./dtos/address-create-or-update.dto";
+import { UpdateUserWithAddressDto } from "./dtos/update-user-with-address.dto";
 
 @ApiTags("Users")
 @ApiExtraModels(ApiResponse, UserResponseDto)
@@ -103,9 +104,11 @@ export class UsersController {
     @Serialize(UserResponseDto)
     async update(
         @Param("id", ParseUUIDPipe) userId: string,
-        @Body() dto: UserUpdateDto,
+        @Body() dto: UpdateUserWithAddressDto,
     ) {
-        return createApiOkResponse(await this.usersService.update(userId, dto));
+        return createApiOkResponse(
+            await this.usersService.updateUserWithAddress(userId, dto),
+        );
     }
 
     @ApiOkResponse({
