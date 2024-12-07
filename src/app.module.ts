@@ -10,7 +10,7 @@ import { PostgresDatabaseConfigModule } from "./config/database/postgres/config.
 import { SeederModule } from "./database/seeders/seeder.module";
 import { UsersSeederModule } from "./database/seeders/users/users.module";
 import { CategoriesModule } from "./models/categories/categories.module";
-import { MulterConfigModule } from "./config/upload/multer/config.module";
+import { MulterConfigModule } from "./config/multer/config.module";
 
 @Module({
     imports: [

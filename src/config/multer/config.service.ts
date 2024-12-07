@@ -4,8 +4,8 @@ import {
     MulterModuleOptions,
     MulterOptionsFactory,
 } from "@nestjs/platform-express";
-import path from "path";
-import { v4 as uuidv4 } from "uuid"; // Установите пакет uuid
+import * as path from "path";
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {

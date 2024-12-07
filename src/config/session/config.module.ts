@@ -4,7 +4,6 @@ import { ConfigModule } from "@nestjs/config";
 
 @Module({
     imports: [ConfigModule],
-    controllers: [],
     providers: [SessionConfig],
     exports: [SessionConfig],
 })
