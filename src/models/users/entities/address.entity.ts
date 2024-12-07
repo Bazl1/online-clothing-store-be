@@ -31,10 +31,10 @@ export class Address {
     flat: string;
 
     @Column()
-    floor: number;
+    floor: string;
 
     @Column()
-    zip: number;
+    zip: string;
 
     @OneToOne(() => User, (user) => user.address)
     @JoinColumn()

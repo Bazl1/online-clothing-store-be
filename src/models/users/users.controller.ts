@@ -28,7 +28,7 @@ import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { AdminGuard } from "@/common/guards/admin.guard";
 import { createApiOkResponse } from "@/common/interfaces/responses/api-response";
 import { UserUpdateDto } from "./dtos/user-update.dto";
-import { AddressCreateOrUpdateDto } from "./dtos/address-create.dto";
+import { AddressCreateOrUpdateDto } from "./dtos/address-create-or-update.dto";
 
 @ApiTags("Users")
 @ApiExtraModels(ApiResponse, UserResponseDto)

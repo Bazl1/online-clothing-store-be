@@ -25,7 +25,7 @@ import {
     getSchemaPath,
 } from "@nestjs/swagger";
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
-import { AddressCreateOrUpdateDto } from "./dtos/address-create.dto";
+import { AddressCreateOrUpdateDto } from "./dtos/address-create-or-update.dto";
 
 @ApiTags("Profile")
 @ApiExtraModels(ApiResponse, UserResponseDto)

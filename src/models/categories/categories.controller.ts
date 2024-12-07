@@ -10,7 +10,9 @@ import {
     Patch,
     Post,
     Query,
+    UploadedFile,
     UseGuards,
+    UseInterceptors,
 } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import { CategoryCreateDto } from "./dto/category-create.dto";
@@ -30,6 +32,7 @@ import {
 } from "@nestjs/swagger";
 import { CategoryUpdateDto } from "./dto/category-update.dto";
 import { SessionGuard } from "@/common/guards/session.guard";
+import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
 
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
@@ -110,9 +113,16 @@ export class CategoriesController {
     @Post()
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
-    async craete(@Body() dto: CategoryCreateDto) {
+    @UseInterceptors(FileInterceptor("icon"))
+    async craete(
+        @UploadedFile() icon: Express.Multer.File,
+        @Body() dto: CategoryCreateDto,
+    ) {
         return createApiOkSingleResponse(
-            await this.categoriesService.create(dto),
+            await this.categoriesService.create({
+                ...dto,
+                iconUrl: icon.filename,
+            }),
         );
     }
 

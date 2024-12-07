@@ -28,9 +28,9 @@ export class AddressResponseDto {
 
     @ApiProperty()
     @Expose()
-    floor: number;
+    floor: string;
 
     @ApiProperty()
     @Expose()
-    zip: number;
+    zip: string;
 }
