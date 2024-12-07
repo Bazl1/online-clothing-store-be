@@ -5,40 +5,40 @@ export class AddressCreateOrUpdateDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    state: string;
+    state?: string;
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    country: string;
+    country?: string;
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    city: string;
+    city?: string;
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    street: string;
+    street?: string;
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    house: string;
+    house?: string;
 
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    flat: string;
+    flat?: string;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty()
-    floor: number;
+    floor?: number;
 
     @IsNumber()
     @IsNotEmpty()
     @ApiProperty()
-    zip: number;
+    zip?: number;
 }

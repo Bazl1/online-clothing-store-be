@@ -1,10 +1,8 @@
-// session.guard.ts
-import { SessionsService } from "@/models/sessions/sessions.service";
 import {
     Injectable,
     CanActivate,
     ExecutionContext,
-    ForbiddenException,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { RequestWithSession } from "../types/request";
 
@@ -18,11 +16,11 @@ export class SessionGuard implements CanActivate {
         const session = request.session;
 
         if (!session || !session.user) {
-            throw new ForbiddenException("You are not authenticated");
+            throw new UnauthorizedException("You are not authenticated");
         }
 
         if (session.isExpired()) {
-            throw new ForbiddenException("Session expired");
+            throw new UnauthorizedException("Session expired");
         }
 
         return true;

@@ -19,7 +19,11 @@ import { Session as SessionEntity } from "@/models/sessions/entities/session.ent
 import { Response } from "@/common/types/response";
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { UserResponseDto } from "@/models/users/dtos/user-response.dto";
-import { ApiResponse } from "@/common/interfaces/responses/api-response";
+import {
+    ApiResponse,
+    createApiOkMessageResponse,
+    createApiOkSingleResponse,
+} from "@/common/interfaces/responses/api-response";
 import {
     ApiBadRequestResponse,
     ApiExtraModels,
@@ -57,10 +61,7 @@ export class AuthController {
         const session = await this.authService.register(data);
         AuthCookieHelper.setAuthCookie(res, session.id, session.expiresAt);
 
-        return {
-            success: true,
-            data: session.user,
-        } as ApiResponse<UserResponseDto>;
+        return createApiOkSingleResponse(session.user);
     }
 
     @ApiOkResponse({
@@ -85,10 +86,7 @@ export class AuthController {
         const session = await this.authService.login(data);
         AuthCookieHelper.setAuthCookie(res, session.id, session.expiresAt);
 
-        return {
-            success: true,
-            data: session.user,
-        } as ApiResponse<UserResponseDto>;
+        return createApiOkSingleResponse(session.user);
     }
 
     @ApiOkResponse()
@@ -103,10 +101,9 @@ export class AuthController {
         await this.authService.logout(session.id);
         AuthCookieHelper.clearAuthCookie(res);
 
-        return {
-            success: true,
-            message: "User has been successfully logged out",
-        } as ApiResponse;
+        return createApiOkMessageResponse(
+            "User has been successfully logged out",
+        );
     }
 
     @ApiOkResponse({
@@ -127,9 +124,6 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Serialize(UserResponseDto)
     async me(@Session() session: SessionEntity) {
-        return {
-            success: true,
-            data: session.user,
-        } as ApiResponse<UserResponseDto>;
+        return createApiOkSingleResponse(session.user);
     }
 }

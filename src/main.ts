@@ -5,9 +5,12 @@ import { GlobalExceptionFilter } from "./common/filters/global-error-filter";
 import { ValidationPipe } from "./common/pipes/validation.pipe";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { Seeder } from "./database/seeders/seeder";
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+
+    await app.get(Seeder).seed();
 
     const configService = app.get(ConfigService);
 

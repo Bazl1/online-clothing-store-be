@@ -26,14 +26,18 @@ export class UsersService {
             );
         }
 
-        const [users, total] = await qb
+        const [users, totalItems] = await qb
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();
 
-        const totalPages = Math.ceil(total / limit);
+        const totalPages = Math.ceil(totalItems / limit);
 
-        return { users, totalPages };
+        return { users, totalPages, totalItems };
+    }
+
+    async count() {
+        return this.usersRepository.count();
     }
 
     async getByEmail(email: string) {

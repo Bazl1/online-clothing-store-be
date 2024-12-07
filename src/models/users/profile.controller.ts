@@ -1,10 +1,21 @@
-import { Body, Controller, Put, Session, UseGuards } from "@nestjs/common";
+import {
+    Body,
+    Controller,
+    Patch,
+    Put,
+    Session,
+    UseGuards,
+} from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { SessionGuard } from "@/common/guards/session.guard";
 import { Session as SessionEntity } from "../sessions/entities/session.entity";
 import { UserUpdateDto } from "./dtos/user-update.dto";
 import { UserResponseDto } from "./dtos/user-response.dto";
-import { ApiResponse } from "@/common/interfaces/responses/api-response";
+import {
+    ApiResponse,
+    createApiOkResponse,
+    createApiOkSingleResponse,
+} from "@/common/interfaces/responses/api-response";
 import { UserResetPasswordDto } from "./dtos/user-reset-password.dto";
 import {
     ApiBadRequestResponse,
@@ -36,18 +47,15 @@ export class ProfileController {
         },
     })
     @ApiBadRequestResponse()
-    @Put()
+    @Patch()
     @Serialize(UserResponseDto)
     async update(
         @Session() session: SessionEntity,
         @Body() dto: UserUpdateDto,
     ) {
-        const user = await this.usersService.update(session.user.id, dto);
-
-        return {
-            data: user,
-            success: true,
-        } as ApiResponse<UserResponseDto>;
+        return createApiOkSingleResponse(
+            await this.usersService.update(session.user.id, dto),
+        );
     }
 
     @ApiOkResponse({
@@ -56,20 +64,16 @@ export class ProfileController {
         },
     })
     @ApiBadRequestResponse()
-    @Put("password")
+    @Patch("password")
     @Serialize(UserResponseDto)
     async updatePassword(
         @Session() session: SessionEntity,
         @Body() dto: UserResetPasswordDto,
     ) {
-        const user = await this.usersService.updatePassword(
-            session.user.id,
-            dto,
+        return createApiOkSingleResponse(
+            await this.usersService.updatePassword(session.user.id, dto),
+            "Password updated successfully",
         );
-
-        return {
-            success: true,
-        } as ApiResponse<null>;
     }
 
     @ApiOkResponse({
@@ -85,20 +89,17 @@ export class ProfileController {
         },
     })
     @ApiBadRequestResponse()
-    @Put("address")
+    @Patch("address")
     @Serialize(UserResponseDto)
     async updateAddress(
         @Session() session: SessionEntity,
         @Body() dto: AddressCreateOrUpdateDto,
     ) {
-        const user = await this.usersService.createAddressOrUpdateAddress(
-            session.user,
-            dto,
+        return createApiOkResponse(
+            await this.usersService.createAddressOrUpdateAddress(
+                session.user,
+                dto,
+            ),
         );
-
-        return {
-            data: user,
-            success: true,
-        } as ApiResponse<UserResponseDto>;
     }
 }

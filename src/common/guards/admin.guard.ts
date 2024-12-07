@@ -1,10 +1,9 @@
-// session.guard.ts
-import { SessionsService } from "@/models/sessions/sessions.service";
 import {
     Injectable,
     CanActivate,
     ExecutionContext,
     ForbiddenException,
+    UnauthorizedException,
 } from "@nestjs/common";
 import { RequestWithSession } from "../types/request";
 import { UserRole } from "@/models/users/entities/user.entity";
@@ -19,11 +18,11 @@ export class AdminGuard implements CanActivate {
         const session = request.session;
 
         if (!session || !session.user) {
-            throw new ForbiddenException("You are not authenticated");
+            throw new UnauthorizedException("You are not authenticated");
         }
 
         if (session.isExpired()) {
-            throw new ForbiddenException("Session expired");
+            throw new UnauthorizedException("Session expired");
         }
 
         if (session.user.role !== UserRole.ADMIN) {

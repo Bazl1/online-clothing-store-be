@@ -7,13 +7,16 @@ import {
     Param,
     ParseIntPipe,
     ParseUUIDPipe,
-    Put,
+    Patch,
     Query,
     UseGuards,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { UserResponseDto } from "./dtos/user-response.dto";
-import { ApiResponse } from "@/common/interfaces/responses/api-response";
+import {
+    ApiResponse,
+    createApiOkMessageResponse,
+} from "@/common/interfaces/responses/api-response";
 import {
     ApiBadRequestResponse,
     ApiExtraModels,
@@ -59,13 +62,10 @@ export class UsersController {
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
         @Query("query") query?: string,
     ) {
-        const { users, totalPages } = await this.usersService.search(
-            query,
-            page,
-            limit,
-        );
+        const { users, totalPages, totalItems } =
+            await this.usersService.search(query, page, limit);
 
-        return createApiOkResponse(users, page, totalPages);
+        return createApiOkResponse(users, page, totalPages, totalItems);
     }
 
     @ApiOkResponse({
@@ -99,7 +99,7 @@ export class UsersController {
             ],
         },
     })
-    @Put(":id")
+    @Patch(":id")
     @Serialize(UserResponseDto)
     async update(
         @Param("id", ParseUUIDPipe) userId: string,
@@ -120,7 +120,7 @@ export class UsersController {
             ],
         },
     })
-    @Put(":id/address")
+    @Patch(":id/address")
     @Serialize(UserResponseDto)
     async updateAddress(
         @Param("id", ParseUUIDPipe) userId: string,
@@ -148,11 +148,6 @@ export class UsersController {
     @Serialize(UserResponseDto)
     async delete(@Param("id", ParseUUIDPipe) userId: string) {
         await this.usersService.delete(userId);
-        return createApiOkResponse(
-            undefined,
-            undefined,
-            undefined,
-            "User deleted",
-        );
+        return createApiOkMessageResponse("User deleted");
     }
 }
