@@ -11,6 +11,7 @@ import { SeederModule } from "./database/seeders/seeder.module";
 import { UsersSeederModule } from "./database/seeders/users/users.module";
 import { CategoriesModule } from "./models/categories/categories.module";
 import { MulterConfigModule } from "./config/multer/config.module";
+import { ProductsModule } from "./models/products/products.module";
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { MulterConfigModule } from "./config/multer/config.module";
         UsersModule,
         SessionsModule,
         CategoriesModule,
+        ProductsModule,
 
         // Auth
         AuthModule,
