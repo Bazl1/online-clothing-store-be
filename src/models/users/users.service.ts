@@ -17,6 +17,12 @@ export class UsersService {
         private readonly addressesService: AddressesService,
     ) {}
 
+    async deleteMany(ids: string[]) {
+        for (const id of ids) {
+            await this.delete(id);
+        }
+    }
+
     async search(query: string | undefined, page: number, limit: number) {
         const qb = this.usersRepository.createQueryBuilder("user");
 

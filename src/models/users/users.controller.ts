@@ -27,8 +27,6 @@ import {
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { AdminGuard } from "@/common/guards/admin.guard";
 import { createApiOkResponse } from "@/common/interfaces/responses/api-response";
-import { UserUpdateDto } from "./dtos/user-update.dto";
-import { AddressCreateOrUpdateDto } from "./dtos/address-create-or-update.dto";
 import { UpdateUserWithAddressDto } from "./dtos/update-user-with-address.dto";
 
 @ApiTags("Users")
@@ -67,6 +65,12 @@ export class UsersController {
             await this.usersService.search(query, page, limit);
 
         return createApiOkResponse(users, page, totalPages, totalItems);
+    }
+
+    @Delete()
+    async deleteByIds(@Body("ids") ids: string[]) {
+        await this.usersService.deleteMany(ids);
+        return createApiOkMessageResponse("Users deleted successfully");
     }
 
     @ApiOkResponse({
@@ -113,38 +117,7 @@ export class UsersController {
 
     @ApiOkResponse({
         schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
-                        data: { $ref: getSchemaPath(UserResponseDto) },
-                    },
-                },
-            ],
-        },
-    })
-    @Patch(":id/address")
-    @Serialize(UserResponseDto)
-    async updateAddress(
-        @Param("id", ParseUUIDPipe) userId: string,
-        @Body() dto: AddressCreateOrUpdateDto,
-    ) {
-        const user = await this.usersService.getById(userId);
-        return createApiOkResponse(
-            await this.usersService.createAddressOrUpdateAddress(user, dto),
-        );
-    }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
-                        data: { $ref: getSchemaPath(UserResponseDto) },
-                    },
-                },
-            ],
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
         },
     })
     @Delete(":id")

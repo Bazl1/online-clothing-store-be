@@ -6,8 +6,10 @@ import {
     PrimaryGeneratedColumn,
     OneToOne,
     JoinTable,
+    ManyToOne,
 } from "typeorm";
 import { Address } from "./address.entity";
+import { Product } from "@/models/products/entities/product.entity";
 
 export enum UserRole {
     ADMIN = "admin",
@@ -51,6 +53,10 @@ export class User {
         default: UserRole.USER,
     })
     role: UserRole;
+
+    @ManyToOne(() => Product, (product) => product.id)
+    @JoinTable()
+    product: Product;
 
     @CreateDateColumn({
         name: "created_at",
