@@ -24,7 +24,7 @@ export class UsersService {
             qb.where(
                 "user.firstName ILIKE :query OR user.lastName ILIKE :query",
                 { query: `%${query}%` },
-            );
+            ).relation("address");
         }
 
         const [users, totalItems] = await qb
@@ -46,7 +46,10 @@ export class UsersService {
     }
 
     async getById(id: string) {
-        return this.usersRepository.findOne({ where: { id } });
+        return this.usersRepository.findOne({
+            where: { id },
+            relations: ["address"],
+        });
     }
 
     async create(data: User) {

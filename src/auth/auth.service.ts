@@ -28,7 +28,7 @@ export class AuthService {
 
         const user = await this.usersService.create(new User(data));
 
-        return this.sessionsService.create(
+        const session = await this.sessionsService.create(
             new Session({
                 user,
                 expiresAt: new Date(
@@ -36,6 +36,8 @@ export class AuthService {
                 ),
             }),
         );
+
+        return this.sessionsService.getById(session.id);
     }
 
     async login(data: LoginDto) {
@@ -51,7 +53,7 @@ export class AuthService {
             throw new BadRequestException("Invalid password");
         }
 
-        return this.sessionsService.create(
+        const session = await this.sessionsService.create(
             new Session({
                 user,
                 expiresAt: new Date(
@@ -59,6 +61,8 @@ export class AuthService {
                 ),
             }),
         );
+
+        return this.sessionsService.getById(session.id);
     }
 
     async logout(sessionId: string) {

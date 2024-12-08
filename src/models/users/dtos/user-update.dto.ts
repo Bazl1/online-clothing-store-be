@@ -13,7 +13,6 @@ export class UserUpdateDto {
     lastName?: string;
 
     @ApiProperty()
-    @IsPhoneNumber()
     @IsOptional()
     phoneNumber?: string;
 }

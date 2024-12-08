@@ -31,12 +31,16 @@ import {
     ApiTags,
     getSchemaPath,
 } from "@nestjs/swagger";
+import { UsersService } from "@/models/users/users.service";
 
 @ApiTags("Auth")
 @ApiExtraModels(ApiResponse, UserResponseDto)
 @Controller("auth")
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly usersService: UsersService,
+    ) {}
 
     @ApiOkResponse({
         schema: {
@@ -124,6 +128,8 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Serialize(UserResponseDto)
     async me(@Session() session: SessionEntity) {
-        return createApiOkSingleResponse(session.user);
+        return createApiOkSingleResponse(
+            await this.usersService.getById(session.user.id),
+        );
     }
 }

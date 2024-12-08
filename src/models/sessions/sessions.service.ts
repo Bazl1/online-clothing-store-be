@@ -13,7 +13,7 @@ export class SessionsService {
     async getById(id: string) {
         return this.sessionsRepository.findOne({
             where: { id },
-            relations: ["user"],
+            relations: ["user", "user.address"],
         });
     }
 
