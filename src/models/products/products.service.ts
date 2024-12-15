@@ -16,8 +16,8 @@ export class ProductsService {
         private readonly productRepository: Repository<Product>,
     ) {}
 
-    async create(data: Partial<Product>) {
-        return this.productRepository.save(new Product(data));
+    async create(data: Product) {
+        return this.productRepository.save(data);
     }
 
     async getAll(
@@ -75,9 +75,7 @@ export class ProductsService {
     }
 
     async deleteMany(ids: string[]) {
-        for (const id of ids) {
-            await this.delete(id);
-        }
+        return this.productRepository.delete(ids);
     }
 
     async delete(id: string) {

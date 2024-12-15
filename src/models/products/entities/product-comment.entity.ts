@@ -14,7 +14,7 @@ import { Product } from "./product.entity";
 @Entity("product-comments")
 export class ProductComment {
     @PrimaryGeneratedColumn("uuid")
-    id: number;
+    id: string;
 
     @Column()
     comment: string;
@@ -38,4 +38,8 @@ export class ProductComment {
         type: "timestamp",
     })
     updatedAt: Date;
+
+    constructor(dto: Partial<ProductComment>) {
+        Object.assign(this, dto);
+    }
 }

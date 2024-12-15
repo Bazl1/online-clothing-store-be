@@ -33,6 +33,7 @@ import {
     ApiOkResponse,
     getSchemaPath,
 } from "@nestjs/swagger";
+import { Product } from "./entities/product.entity";
 
 @Controller("products")
 @UseGuards(SessionGuard)
@@ -61,10 +62,12 @@ export class ProductsController {
         @UploadedFile() images: Express.Multer.File[],
     ) {
         return createApiOkSingleResponse(
-            await this.productsService.create({
-                ...dto,
-                images: images.map((image) => image.filename),
-            }),
+            await this.productsService.create(
+                new Product({
+                    ...dto,
+                    images: images.map((image) => image.filename),
+                }),
+            ),
         );
     }
 
@@ -76,7 +79,7 @@ export class ProductsController {
     @ApiBadRequestResponse()
     @Delete()
     @UseGuards(AdminGuard)
-    async deleteByIds(@Body("ids") ids: string[]) {
+    async deleteMany(@Body("ids") ids: string[]) {
         await this.productsService.deleteMany(ids);
         return createApiOkMessageResponse("Products deleted successfully");
     }

@@ -18,9 +18,7 @@ export class UsersService {
     ) {}
 
     async deleteMany(ids: string[]) {
-        for (const id of ids) {
-            await this.delete(id);
-        }
+        return this.usersRepository.delete(ids);
     }
 
     async search(query: string | undefined, page: number, limit: number) {

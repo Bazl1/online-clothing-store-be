@@ -67,8 +67,13 @@ export class UsersController {
         return createApiOkResponse(users, page, totalPages, totalItems);
     }
 
+    @ApiOkResponse({
+        schema: {
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+        },
+    })
     @Delete()
-    async deleteByIds(@Body("ids") ids: string[]) {
+    async deleteMany(@Body("ids") ids: string[]) {
         await this.usersService.deleteMany(ids);
         return createApiOkMessageResponse("Users deleted successfully");
     }

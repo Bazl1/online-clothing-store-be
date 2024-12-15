@@ -48,7 +48,10 @@ export class CategoriesService {
     }
 
     async delete(id: string) {
-        await this.categoryRepository.delete(id);
-        return;
+        return this.categoryRepository.delete(id);
+    }
+
+    async deleteMany(ids: string[]) {
+        return this.categoryRepository.delete(ids);
     }
 }

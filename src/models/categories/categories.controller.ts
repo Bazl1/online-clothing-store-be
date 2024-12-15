@@ -3,6 +3,7 @@ import {
     Body,
     Controller,
     DefaultValuePipe,
+    Delete,
     Get,
     Param,
     ParseIntPipe,
@@ -18,6 +19,7 @@ import { CategoriesService } from "./categories.service";
 import { CategoryCreateDto } from "./dto/category-create.dto";
 import {
     ApiResponse,
+    createApiOkMessageResponse,
     createApiOkResponse,
     createApiOkSingleResponse,
 } from "@/common/interfaces/responses/api-response";
@@ -32,7 +34,7 @@ import {
 } from "@nestjs/swagger";
 import { CategoryUpdateDto } from "./dto/category-update.dto";
 import { SessionGuard } from "@/common/guards/session.guard";
-import { AnyFilesInterceptor, FileInterceptor } from "@nestjs/platform-express";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
@@ -70,6 +72,21 @@ export class CategoriesController {
             await this.categoriesService.search(query, page, limit);
 
         return createApiOkResponse(categories, page, totalPages, totalItems);
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Delete()
+    @Serialize(CategoryResponseDto)
+    @UseGuards(AdminGuard)
+    async deleteMany(@Body("ids", ParseUUIDPipe) ids: string[]) {
+        await this.categoriesService.deleteMany(ids);
+
+        return createApiOkMessageResponse("Categories deleted successfully");
     }
 
     @ApiOkResponse({
@@ -155,25 +172,15 @@ export class CategoriesController {
 
     @ApiOkResponse({
         schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
-                        data: {
-                            $ref: getSchemaPath(CategoryResponseDto),
-                        },
-                    },
-                },
-            ],
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
         },
     })
     @ApiBadRequestResponse()
-    @Patch(":id")
+    @Delete(":id")
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
     async delete(@Param("id", ParseUUIDPipe) categoryId: string) {
-        return createApiOkSingleResponse(
-            await this.categoriesService.delete(categoryId),
-        );
+        await this.categoriesService.delete(categoryId);
+        return createApiOkMessageResponse("Category deleted successfully");
     }
 }
