@@ -29,12 +29,14 @@ import {
     ApiBadRequestResponse,
     ApiExtraModels,
     ApiOkResponse,
+    ApiQuery,
     ApiTags,
     getSchemaPath,
 } from "@nestjs/swagger";
 import { CategoryUpdateDto } from "./dto/category-update.dto";
 import { SessionGuard } from "@/common/guards/session.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { CategoryDeleteManyDto } from "./dto/category-delete-many.dto";
 
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
@@ -61,6 +63,9 @@ export class CategoriesController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiQuery({ name: "page", required: false, type: Number })
+    @ApiQuery({ name: "limit", required: false, type: Number })
+    @ApiQuery({ name: "query", required: false, type: String })
     @Get()
     @Serialize(CategoryResponseDto)
     async search(
@@ -77,14 +82,19 @@ export class CategoriesController {
     @ApiOkResponse({
         schema: {
             allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+            properties: {
+                data: {
+                    $ref: getSchemaPath(CategoryDeleteManyDto),
+                },
+            },
         },
     })
     @ApiBadRequestResponse()
-    @Delete()
+    @Post("delete")
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
-    async deleteMany(@Body("ids", ParseUUIDPipe) ids: string[]) {
-        await this.categoriesService.deleteMany(ids);
+    async deleteMany(@Body() dto: CategoryDeleteManyDto) {
+        await this.categoriesService.deleteMany(dto.ids);
 
         return createApiOkMessageResponse("Categories deleted successfully");
     }

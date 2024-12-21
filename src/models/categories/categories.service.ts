@@ -15,14 +15,18 @@ export class CategoriesService {
     }
 
     async search(query: string | undefined, page: number, limit: number) {
-        const [categories, totalItems] = await this.categoryRepository
-            .createQueryBuilder("category")
-            .where(
+        const db = this.categoryRepository.createQueryBuilder("category");
+
+        if (query) {
+            db.where(
                 "category.title LIKE :query OR category.description ILIKE :query",
                 {
                     query: `%${query}%`,
                 },
-            )
+            );
+        }
+
+        const [categories, totalItems] = await db
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();

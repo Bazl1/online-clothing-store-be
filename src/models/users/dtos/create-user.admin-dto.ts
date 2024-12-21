@@ -1,31 +1,36 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsOptional, IsPhoneNumber } from "class-validator";
+import {
+    IsString,
+    IsPhoneNumber,
+    IsOptional,
+    IsNotEmpty,
+} from "class-validator";
 
-export class UpdateUserWithAddressDto {
+export class CreateUserAddressAdminDto {
     @ApiProperty()
     @IsString()
-    @IsOptional()
-    firstName?: string;
+    @IsNotEmpty()
+    firstName: string;
 
     @ApiProperty()
     @IsString()
-    @IsOptional()
-    lastName?: string;
+    @IsNotEmpty()
+    lastName: string;
 
     @ApiProperty()
     @IsPhoneNumber()
     @IsOptional()
-    phoneNumber?: string;
+    phoneNumber: string;
 
     @ApiProperty()
     @IsString()
-    @IsOptional()
-    password?: string;
+    @IsNotEmpty()
+    email: string;
 
     @ApiProperty()
     @IsString()
-    @IsOptional()
-    email?: string;
+    @IsNotEmpty()
+    password: string;
 
     @IsString()
     @IsOptional()

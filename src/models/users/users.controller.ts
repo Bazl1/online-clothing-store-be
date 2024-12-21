@@ -8,6 +8,7 @@ import {
     ParseIntPipe,
     ParseUUIDPipe,
     Patch,
+    Post,
     Query,
     UseGuards,
 } from "@nestjs/common";
@@ -16,11 +17,13 @@ import { UserResponseDto } from "./dtos/user-response.dto";
 import {
     ApiResponse,
     createApiOkMessageResponse,
+    createApiOkSingleResponse,
 } from "@/common/interfaces/responses/api-response";
 import {
     ApiBadRequestResponse,
     ApiExtraModels,
     ApiOkResponse,
+    ApiQuery,
     ApiTags,
     getSchemaPath,
 } from "@nestjs/swagger";
@@ -28,6 +31,11 @@ import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { AdminGuard } from "@/common/guards/admin.guard";
 import { createApiOkResponse } from "@/common/interfaces/responses/api-response";
 import { UpdateUserWithAddressDto } from "./dtos/update-user-with-address.dto";
+import { CreateUserAddressAdminDto } from "./dtos/create-user.admin-dto";
+import { User } from "./entities/user.entity";
+import { Address } from "./entities/address.entity";
+import data from "@/database/seeders/users/data";
+import { DeleteManyUserAdminDto } from "./dtos/delete-many-user.admin-dto";
 
 @ApiTags("Users")
 @ApiExtraModels(ApiResponse, UserResponseDto)
@@ -35,6 +43,46 @@ import { UpdateUserWithAddressDto } from "./dtos/update-user-with-address.dto";
 @UseGuards(AdminGuard)
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
+
+    @Post()
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
+                        data: {
+                            $ref: getSchemaPath(UserResponseDto),
+                        },
+                    },
+                },
+            ],
+        },
+    })
+    @Serialize(UserResponseDto)
+    async create(@Body() dto: CreateUserAddressAdminDto) {
+        const user = await this.usersService.createUserWithAddress(
+            new User({
+                firstName: dto.firstName,
+                lastName: dto.lastName,
+                email: dto.email,
+                password: dto.password,
+                phoneNumber: dto.phoneNumber,
+            }),
+            new Address({
+                country: dto.country,
+                state: dto.state,
+                city: dto.city,
+                street: dto.street,
+                house: dto.house,
+                flat: dto.flat,
+                floor: dto.floor,
+                zip: dto.zip,
+            }),
+        );
+
+        return createApiOkSingleResponse(user, "User created successfully");
+    }
 
     @ApiOkResponse({
         schema: {
@@ -53,6 +101,24 @@ export class UsersController {
             ],
         },
     })
+    @ApiQuery({
+        name: "page",
+        required: false,
+        type: Number,
+        description: "Page number",
+    })
+    @ApiQuery({
+        name: "limit",
+        required: false,
+        type: Number,
+        description: "Items per page",
+    })
+    @ApiQuery({
+        name: "query",
+        required: false,
+        type: String,
+        description: "Search query",
+    })
     @ApiBadRequestResponse()
     @Get()
     @Serialize(UserResponseDto)
@@ -70,11 +136,16 @@ export class UsersController {
     @ApiOkResponse({
         schema: {
             allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+            properties: {
+                data: {
+                    $ref: getSchemaPath(DeleteManyUserAdminDto),
+                },
+            },
         },
     })
-    @Delete()
-    async deleteMany(@Body("ids") ids: string[]) {
-        await this.usersService.deleteMany(ids);
+    @Post("delete")
+    async deleteMany(@Body() dto: DeleteManyUserAdminDto) {
+        await this.usersService.deleteMany(dto.ids);
         return createApiOkMessageResponse("Users deleted successfully");
     }
 
@@ -115,7 +186,7 @@ export class UsersController {
         @Param("id", ParseUUIDPipe) userId: string,
         @Body() dto: UpdateUserWithAddressDto,
     ) {
-        return createApiOkResponse(
+        return createApiOkSingleResponse(
             await this.usersService.updateUserWithAddress(userId, dto),
         );
     }

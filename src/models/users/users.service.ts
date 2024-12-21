@@ -21,7 +21,12 @@ export class UsersService {
         return this.usersRepository.delete(ids);
     }
 
-    async search(query: string | undefined, page: number, limit: number) {
+    async search(
+        query: string | undefined,
+        page: number,
+        limit: number,
+        role: string = "user",
+    ) {
         const qb = this.usersRepository.createQueryBuilder("user");
 
         if (query) {
@@ -32,6 +37,7 @@ export class UsersService {
         }
 
         const [users, totalItems] = await qb
+            .andWhere("user.role = :role", { role })
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();
@@ -60,6 +66,12 @@ export class UsersService {
         return this.usersRepository.save(data);
     }
 
+    async createUserWithAddress(userData: User, addressData: Address) {
+        const user = await this.create(userData);
+        await this.addressesService.createOrUpdate(addressData, user);
+        return this.getById(user.id);
+    }
+
     async update(id: string, data: Partial<User>) {
         await this.usersRepository.update(id, data);
         return this.getById(id);
@@ -80,6 +92,7 @@ export class UsersService {
             lastName: data.lastName,
             phoneNumber: data.phoneNumber,
             email: data.email,
+            password: await this.passwordService.hashPassword(data.password),
         });
 
         await this.addressesService.createOrUpdate(

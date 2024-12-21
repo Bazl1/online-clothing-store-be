@@ -51,7 +51,7 @@ export class ProductCommentsController {
         );
     }
 
-    @Delete()
+    @Post("delete")
     async deleteMany(@Body("ids") ids: string[]) {
         await this.productCommentsService.deleteMany(ids);
         return createApiOkMessageResponse(

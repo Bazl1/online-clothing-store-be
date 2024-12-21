@@ -77,7 +77,7 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
-    @Delete()
+    @Post("delete")
     @UseGuards(AdminGuard)
     async deleteMany(@Body("ids") ids: string[]) {
         await this.productsService.deleteMany(ids);
