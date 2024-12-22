@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
 
 export class CategoryCreateDto {
     @ApiProperty()
@@ -13,8 +13,13 @@ export class CategoryCreateDto {
     description: string;
 
     @ApiProperty({
-        description: "Image Datas",
+        description: "Icon file",
         format: "binary",
     })
     icon: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsBoolean()
+    isActive: boolean;
 }

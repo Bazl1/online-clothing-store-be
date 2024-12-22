@@ -200,15 +200,23 @@ export class CategoriesController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiConsumes("multipart/form-data")
+    @ApiBody({
+        type: CategoryCreateDto,
+    })
     @Patch(":id")
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
     async update(
         @Param("id", ParseUUIDPipe) categoryId: string,
+        @UploadedFile() icon: Express.Multer.File,
         @Body() dto: CategoryUpdateDto,
     ) {
         return createApiOkSingleResponse(
-            await this.categoriesService.update(categoryId, dto),
+            await this.categoriesService.update(categoryId, {
+                ...dto,
+                iconUrl: icon.filename,
+            }),
         );
     }
 

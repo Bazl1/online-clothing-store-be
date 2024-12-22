@@ -1,16 +1,22 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsUrl } from "class-validator";
+import { IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
 
 export class CategoryUpdateDto {
-    @ApiProperty()
-    @IsOptional()
-    @IsUrl()
-    iconUrl?: string;
+    @ApiProperty({
+        description: "Icon file",
+        format: "binary",
+    })
+    icon: any;
 
     @ApiProperty()
     @IsOptional()
     @IsString()
     title?: string;
+
+    @ApiProperty()
+    @IsOptional()
+    @IsBoolean()
+    isActive?: boolean;
 
     @ApiProperty()
     @IsOptional()
