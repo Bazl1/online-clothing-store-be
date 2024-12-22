@@ -12,6 +12,7 @@ import { UsersSeederModule } from "./database/seeders/users/users.module";
 import { CategoriesModule } from "./models/categories/categories.module";
 import { MulterConfigModule } from "./config/multer/config.module";
 import { ProductsModule } from "./models/products/products.module";
+import { FilesModule } from "./files/files.module";
 
 @Module({
     imports: [
@@ -25,6 +26,9 @@ import { ProductsModule } from "./models/products/products.module";
 
         // Database
         PostgresDatabaseProviderModule,
+
+        // Files
+        FilesModule,
 
         // Modules
         UsersModule,

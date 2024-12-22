@@ -209,13 +209,13 @@ export class CategoriesController {
     @UseGuards(AdminGuard)
     async update(
         @Param("id", ParseUUIDPipe) categoryId: string,
-        @UploadedFile() icon: Express.Multer.File,
         @Body() dto: CategoryUpdateDto,
+        @UploadedFile() icon?: Express.Multer.File,
     ) {
         return createApiOkSingleResponse(
             await this.categoriesService.update(categoryId, {
                 ...dto,
-                iconUrl: icon.filename,
+                ...(icon && { iconUrl: icon.filename }),
             }),
         );
     }

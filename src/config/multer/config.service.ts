@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {
-    private readonly DEFAULT_UPLOADS_DEST = "./uploads";
+    readonly DEFAULT_UPLOADS_DEST = "./uploads";
 
     constructor(private readonly configService: ConfigService) {}
 
