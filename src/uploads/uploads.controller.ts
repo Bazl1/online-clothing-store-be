@@ -1,5 +1,11 @@
 import { MulterConfigService } from "@/config/multer/config.service";
-import { Controller, Get, NotFoundException, Param } from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    NotFoundException,
+    Param,
+    StreamableFile,
+} from "@nestjs/common";
 import * as path from "path";
 import * as fs from "fs";
 import {
@@ -28,6 +34,6 @@ export class UploadsController {
             throw new NotFoundException("File not found");
         }
 
-        return fs.createReadStream(filePath);
+        return new StreamableFile(fs.createReadStream(filePath));
     }
 }
