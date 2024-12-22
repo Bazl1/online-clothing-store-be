@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsOptional, IsString, IsUrl } from "class-validator";
+import { IsOptional, IsString, IsUrl } from "class-validator";
 
 export class CategoryUpdateDto {
     @ApiProperty({
@@ -15,7 +15,6 @@ export class CategoryUpdateDto {
 
     @ApiProperty()
     @IsOptional()
-    @IsBoolean()
     isActive?: boolean;
 
     @ApiProperty()

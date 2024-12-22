@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsString, IsNotEmpty, IsBoolean } from "class-validator";
+import { IsArray, IsString, IsNotEmpty } from "class-validator";
 
 export class CategoryUpdateManyActiveDto {
     @ApiProperty({ type: [String], isArray: true })
@@ -9,7 +9,6 @@ export class CategoryUpdateManyActiveDto {
     ids: string[];
 
     @ApiProperty()
-    @IsBoolean()
     @IsNotEmpty()
     isActive: boolean;
 }
