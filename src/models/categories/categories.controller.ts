@@ -202,11 +202,12 @@ export class CategoriesController {
     @ApiBadRequestResponse()
     @ApiConsumes("multipart/form-data")
     @ApiBody({
-        type: CategoryCreateDto,
+        type: CategoryUpdateDto,
     })
     @Patch(":id")
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
+    // @UseInterceptors(FileInterceptor("icon"))
     async update(
         @Param("id", ParseUUIDPipe) categoryId: string,
         @Body() dto: CategoryUpdateDto,
@@ -235,11 +236,11 @@ export class CategoriesController {
         },
     })
     @ApiBadRequestResponse()
-    @Patch("toggle-enabled")
-    @Serialize(CategoryResponseDto)
+    @Patch("actions/toggle-enabled")
     @UseGuards(AdminGuard)
+    @Serialize(CategoryResponseDto)
     async toggleEnabled(@Body() dto: CategoryUpdateManyActiveDto) {
-        return createApiOkSingleResponse(
+        return createApiOkResponse(
             await this.categoriesService.updateMany(dto.ids, {
                 isActive: dto.isActive,
             }),

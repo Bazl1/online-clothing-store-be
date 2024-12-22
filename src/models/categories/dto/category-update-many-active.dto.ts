@@ -1,11 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsString, IsNotEmpty } from "class-validator";
+import { ArrayNotEmpty, IsArray, IsNotEmpty, IsUUID } from "class-validator";
 
 export class CategoryUpdateManyActiveDto {
-    @ApiProperty({ type: [String], isArray: true })
+    @ApiProperty({ type: String, isArray: true })
+    @IsUUID("4", { each: true })
     @IsArray()
-    @IsString({ each: true })
-    @IsNotEmpty()
+    @ArrayNotEmpty()
     ids: string[];
 
     @ApiProperty()

@@ -3,22 +3,29 @@ import { IsOptional, IsString } from "class-validator";
 
 export class CategoryUpdateDto {
     @ApiProperty({
-        description: "Icon file",
         format: "binary",
+        type: "string",
+        required: false,
     })
     @IsOptional()
     icon?: any;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsString()
     title?: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     isActive?: boolean;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsString()
     description?: string;
