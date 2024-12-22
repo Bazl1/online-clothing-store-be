@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
-import { FilesController } from "./files.controller";
+import { UploadsController } from "./uploads.controller";
 import { MulterConfigModule } from "@/config/multer/config.module";
 
 @Module({
     imports: [MulterConfigModule],
-    controllers: [FilesController],
+    controllers: [UploadsController],
     providers: [],
 })
-export class FilesModule {}
+export class UploadsModule {}

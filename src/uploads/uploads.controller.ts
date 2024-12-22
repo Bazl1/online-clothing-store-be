@@ -9,9 +9,9 @@ import {
     ApiTags,
 } from "@nestjs/swagger";
 
-@ApiTags("Files")
-@Controller("files")
-export class FilesController {
+@ApiTags("Uploads")
+@Controller("uploads")
+export class UploadsController {
     constructor(private readonly multerConfigService: MulterConfigService) {}
 
     @ApiOkResponse()
