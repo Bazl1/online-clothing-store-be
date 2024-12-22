@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Category } from "./entities/category.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 
 @Injectable()
 export class CategoriesService {
@@ -27,6 +27,7 @@ export class CategoriesService {
         }
 
         const [categories, totalItems] = await db
+            .orderBy("category.createdAt", "DESC")
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();
@@ -37,7 +38,9 @@ export class CategoriesService {
     }
 
     async getAll() {
-        return this.categoryRepository.find();
+        return this.categoryRepository.find({
+            order: { createdAt: "DESC" },
+        });
     }
 
     async getById(id: string) {
@@ -46,9 +49,23 @@ export class CategoriesService {
         });
     }
 
+    async getByIds(ids: string[]) {
+        return this.categoryRepository.find({
+            where: {
+                id: In(ids),
+            },
+            order: { createdAt: "DESC" },
+        });
+    }
+
     async update(id: string, data: Partial<Category>) {
         await this.categoryRepository.update(id, data);
         return this.getById(id);
+    }
+
+    async updateMany(ids: string[], data: Partial<Category>) {
+        await this.categoryRepository.update(ids, data);
+        return this.getByIds(ids);
     }
 
     async delete(id: string) {

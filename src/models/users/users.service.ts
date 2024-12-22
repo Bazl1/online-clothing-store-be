@@ -38,6 +38,7 @@ export class UsersService {
 
         const [users, totalItems] = await qb
             .andWhere("user.role = :role", { role })
+            .orderBy("user.createdAt", "DESC")
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();

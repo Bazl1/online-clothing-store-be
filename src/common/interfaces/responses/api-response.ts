@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class ApiResponse<TData = Object> {
+export class ApiResponse<TData> {
     @ApiProperty({ nullable: true })
     errorType?: "validation" | "error";
 
@@ -13,7 +13,6 @@ export class ApiResponse<TData = Object> {
     @ApiProperty({ nullable: true })
     message?: string;
 
-    @ApiProperty({ nullable: true, type: Object })
     data?: TData;
 
     @ApiProperty({ nullable: true })

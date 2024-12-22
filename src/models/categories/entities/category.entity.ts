@@ -1,4 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from "typeorm";
 
 @Entity("categories")
 export class Category {
@@ -19,6 +25,18 @@ export class Category {
 
     @Column()
     description: string;
+
+    @CreateDateColumn({
+        name: "created_at",
+        type: "timestamp",
+    })
+    createdAt: Date;
+
+    @UpdateDateColumn({
+        name: "updated_at",
+        type: "timestamp",
+    })
+    updatedAt: Date;
 
     constructor(partial: Partial<Category>) {
         Object.assign(this, partial);

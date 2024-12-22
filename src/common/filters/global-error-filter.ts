@@ -15,10 +15,9 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         const status =
             exception instanceof HttpException ? exception.getStatus() : 500;
 
-        const data: ApiResponse = {
-            success: false,
-            errorType: "error",
-        };
+        const data = new ApiResponse();
+        data.success = false;
+        data.errorType = "error";
 
         console.log(exception);
 

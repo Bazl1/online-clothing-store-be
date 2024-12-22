@@ -27,6 +27,8 @@ import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { CategoryResponseDto } from "./dto/category-response.dto";
 import {
     ApiBadRequestResponse,
+    ApiBody,
+    ApiConsumes,
     ApiExtraModels,
     ApiOkResponse,
     ApiQuery,
@@ -37,6 +39,8 @@ import { CategoryUpdateDto } from "./dto/category-update.dto";
 import { SessionGuard } from "@/common/guards/session.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CategoryDeleteManyDto } from "./dto/category-delete-many.dto";
+import { CategoryUpdateManyActiveDto } from "./dto/category-update-many-active.dto";
+import { CategoryListResourceDto } from "./dto/category-list-response.dto";
 
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
@@ -77,6 +81,30 @@ export class CategoriesController {
             await this.categoriesService.search(query, page, limit);
 
         return createApiOkResponse(categories, page, totalPages, totalItems);
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
+                        data: {
+                            type: "array",
+                            items: {
+                                $ref: getSchemaPath(CategoryResponseDto),
+                            },
+                        },
+                    },
+                },
+            ],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Get("list")
+    @Serialize(CategoryListResourceDto)
+    async list() {
+        return createApiOkResponse(await this.categoriesService.getAll());
     }
 
     @ApiOkResponse({
@@ -137,11 +165,15 @@ export class CategoriesController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiConsumes("multipart/form-data")
+    @ApiBody({
+        type: CategoryCreateDto,
+    })
     @Post()
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
     @UseInterceptors(FileInterceptor("icon"))
-    async craete(
+    async create(
         @UploadedFile() icon: Express.Multer.File,
         @Body() dto: CategoryCreateDto,
     ) {
@@ -177,6 +209,32 @@ export class CategoriesController {
     ) {
         return createApiOkSingleResponse(
             await this.categoriesService.update(categoryId, dto),
+        );
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
+                        data: {
+                            $ref: getSchemaPath(CategoryResponseDto),
+                        },
+                    },
+                },
+            ],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Patch("toggle-enabled")
+    @Serialize(CategoryResponseDto)
+    @UseGuards(AdminGuard)
+    async toggleEnabled(@Body() dto: CategoryUpdateManyActiveDto) {
+        return createApiOkSingleResponse(
+            await this.categoriesService.updateMany(dto.ids, {
+                isActive: dto.isActive,
+            }),
         );
     }
 
