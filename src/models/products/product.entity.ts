@@ -8,7 +8,8 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { ProductComment } from "./product-comment.entity";
+import { Category } from "@/models/categories/category.entity";
+import { Comment } from "@/models/comments/comment.entity";
 
 @Entity("products")
 export class Product {
@@ -16,11 +17,18 @@ export class Product {
     id: string;
 
     @Column()
-    name: string;
+    articul: string;
 
-    @OneToMany(() => ProductComment, (productComment) => productComment.product)
+    @Column()
+    title: string;
+
+    @OneToMany(() => Category, (category) => category.products)
     @JoinTable()
-    productComments: ProductComment[];
+    category: Category;
+
+    @ManyToOne(() => Comment, (comment) => comment.product)
+    @JoinTable()
+    comments: Comment[];
 
     @Column()
     description: string;
@@ -28,8 +36,14 @@ export class Product {
     @Column()
     price: number;
 
+    @Column()
+    discountPrice: number;
+
     @Column("simple-array")
     images: string[];
+
+    @Column()
+    isActive: boolean;
 
     @CreateDateColumn({
         name: "created_at",

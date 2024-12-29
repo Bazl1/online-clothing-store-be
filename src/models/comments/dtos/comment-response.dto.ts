@@ -1,7 +1,7 @@
 import { UserResponseDto } from "@/models/users/dtos/user-response.dto";
 import { Expose, Type } from "class-transformer";
 
-export class ProductCommentResponseDto {
+export class CommentResponseDto {
     @Expose()
     id: string;
 

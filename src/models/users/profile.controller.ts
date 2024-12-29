@@ -8,7 +8,7 @@ import {
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { SessionGuard } from "@/common/guards/session.guard";
-import { Session as SessionEntity } from "../sessions/entities/session.entity";
+import { Session as SessionEntity } from "../sessions/session.entity";
 import { UserUpdateDto } from "./dtos/user-update.dto";
 import { UserResponseDto } from "./dtos/user-response.dto";
 import {

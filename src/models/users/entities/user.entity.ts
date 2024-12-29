@@ -9,7 +9,7 @@ import {
     ManyToOne,
 } from "typeorm";
 import { Address } from "./address.entity";
-import { Product } from "@/models/products/entities/product.entity";
+import { Product } from "@/models/products/product.entity";
 
 export enum UserRole {
     ADMIN = "admin",

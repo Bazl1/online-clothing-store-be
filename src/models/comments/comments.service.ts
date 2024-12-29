@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ProductComment } from "./entities/product-comment.entity";
+import { Comment } from "./comment.entity";
 
 @Injectable()
-export class ProductCommentsService {
+export class CommentsService {
     constructor(
-        @InjectRepository(ProductComment)
-        private readonly productCommentsService: Repository<ProductComment>,
+        @InjectRepository(Comment)
+        private readonly commentsRepository: Repository<Comment>,
     ) {}
 
-    async create(data: ProductComment) {
-        return await this.productCommentsService.save(data);
+    async create(data: Comment) {
+        return await this.commentsRepository.save(data);
     }
 
     async getAll(productId: string, page: number, limit: number) {
@@ -21,12 +21,12 @@ export class ProductCommentsService {
             },
         };
 
-        const totalItems = await this.productCommentsService.count({ where });
+        const totalItems = await this.commentsRepository.count({ where });
 
         const totalPages = Math.ceil(totalItems / limit);
 
         return {
-            items: await this.productCommentsService.find({
+            items: await this.commentsRepository.find({
                 where,
                 take: limit,
                 skip: (page - 1) * limit,
@@ -37,26 +37,26 @@ export class ProductCommentsService {
     }
 
     async getById(productCommentId: string) {
-        return await this.productCommentsService.find({
+        return await this.commentsRepository.find({
             where: {
                 id: productCommentId,
             },
         });
     }
 
-    async update(productCommentId: string, data: Partial<ProductComment>) {
+    async update(productCommentId: string, data: Partial<Comment>) {
         if (!(await this.getById(productCommentId))) {
             throw new Error("Product comment not found");
         }
 
-        return this.productCommentsService.update(productCommentId, data);
+        return this.commentsRepository.update(productCommentId, data);
     }
 
     async delete(productCommentId: string) {
-        return this.productCommentsService.delete(productCommentId);
+        return this.commentsRepository.delete(productCommentId);
     }
 
     async deleteMany(productCommentIds: string[]) {
-        return this.productCommentsService.delete(productCommentIds);
+        return this.commentsRepository.delete(productCommentIds);
     }
 }

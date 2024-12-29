@@ -17,11 +17,11 @@ import {
 import { ProductsService } from "./products.service";
 import { SessionGuard } from "@/common/guards/session.guard";
 import { AdminGuard } from "@/common/guards/admin.guard";
-import { ProductCreateDto } from "./dto/product-create.dto";
+import { ProductCreateDto } from "./dtos/product-create.dto";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
-import { ProductResponseDto } from "./dto/product-response.dto";
-import { ProductUpdateDto } from "./dto/product-update.dto";
+import { ProductResponseDto } from "./dtos/product-response.dto";
+import { ProductUpdateDto } from "./dtos/product-update.dto";
 import {
     ApiResponse,
     createApiOkMessageResponse,
@@ -33,7 +33,8 @@ import {
     ApiOkResponse,
     getSchemaPath,
 } from "@nestjs/swagger";
-import { Product } from "./entities/product.entity";
+import { Product } from "./product.entity";
+import { Category } from "../categories/category.entity";
 
 @Controller("products")
 @UseGuards(SessionGuard)
@@ -65,6 +66,9 @@ export class ProductsController {
             await this.productsService.create(
                 new Product({
                     ...dto,
+                    category: new Category({
+                        id: dto.categoryId,
+                    }),
                     images: images.map((image) => image.filename),
                 }),
             ),
@@ -99,6 +103,36 @@ export class ProductsController {
 
     @ApiOkResponse({
         schema: {
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Patch("/activate")
+    @UseGuards(AdminGuard)
+    async activate(@Body("ids") ids: string[]) {
+        await this.productsService.updateMany(ids, {
+            isActive: true,
+        });
+        return createApiOkMessageResponse("Products activated successfully");
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Patch("/deactivate")
+    @UseGuards(AdminGuard)
+    async deactivate(@Body("ids") ids: string[]) {
+        await this.productsService.updateMany(ids, {
+            isActive: true,
+        });
+        return createApiOkMessageResponse("Products activated successfully");
+    }
+
+    @ApiOkResponse({
+        schema: {
             allOf: [
                 { $ref: getSchemaPath(ApiResponse) },
                 {
@@ -112,18 +146,24 @@ export class ProductsController {
     @ApiBadRequestResponse()
     @Patch("id")
     @UseGuards(AdminGuard)
-    @UseInterceptors(FilesInterceptor("images"))
+    @UseInterceptors(
+        FilesInterceptor("deletedFiles"),
+        FilesInterceptor("uploadedFiles"),
+    )
     @Serialize(ProductResponseDto)
     async update(
         @Param("id", ParseUUIDPipe) id: string,
         @Body() dto: ProductUpdateDto,
-        @UploadedFile() images: Express.Multer.File[],
+        @UploadedFile("deletedFiles") deletedFiles: Express.Multer.File[],
+        @UploadedFile("uploadedFiles") uploadedFiles: Express.Multer.File[],
     ) {
         return createApiOkSingleResponse(
-            await this.productsService.update(id, {
-                ...dto,
-                images: images.map((image) => image.filename),
-            }),
+            await this.productsService.updateWithImages(
+                id,
+                dto,
+                deletedFiles.map((file) => file.filename),
+                uploadedFiles.map((file) => file.filename),
+            ),
         );
     }
 

@@ -4,22 +4,21 @@ import {
     CreateDateColumn,
     Entity,
     JoinTable,
-    ManyToOne,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { Product } from "./product.entity";
+import { Product } from "../products/product.entity";
 
-@Entity("product-comments")
-export class ProductComment {
+@Entity("comments")
+export class Comment {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
     @Column()
     comment: string;
 
-    @ManyToOne(() => Product, (product) => product.productComments)
+    @OneToMany(() => Product, (product) => product.comments)
     @JoinTable()
     product: Product;
 
@@ -39,7 +38,7 @@ export class ProductComment {
     })
     updatedAt: Date;
 
-    constructor(dto: Partial<ProductComment>) {
+    constructor(dto: Partial<Comment>) {
         Object.assign(this, dto);
     }
 }

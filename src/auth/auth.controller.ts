@@ -15,7 +15,7 @@ import { LoginDto } from "./dtos/login.dto";
 import { SessionGuard } from "@/common/guards/session.guard";
 import { Request } from "@/common/types/request";
 import { Session } from "@/common/decorators/request/session.decorator";
-import { Session as SessionEntity } from "@/models/sessions/entities/session.entity";
+import { Session as SessionEntity } from "@/models/sessions/session.entity";
 import { Response } from "@/common/types/response";
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { UserResponseDto } from "@/models/users/dtos/user-response.dto";

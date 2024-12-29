@@ -1,4 +1,4 @@
-import { Session } from "@/models/sessions/entities/session.entity";
+import { Session } from "@/models/sessions/session.entity";
 import { CookieOptions, Request as ExpressRequest } from "express";
 
 export type Request = ExpressRequest & {

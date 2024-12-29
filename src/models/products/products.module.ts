@@ -1,12 +1,12 @@
 import { Module } from "@nestjs/common";
-import { Product } from "./entities/product.entity";
+import { Product } from "./product.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MulterModule } from "@nestjs/platform-express";
 import { MulterConfigService } from "@/config/multer/config.service";
 import { MulterConfigModule } from "@/config/multer/config.module";
 import { ConfigModule } from "@nestjs/config";
 import { ProductsService } from "./products.service";
-import { ProductComment } from "./entities/product-comment.entity";
+import { ProductsController } from "./products.controller";
 
 @Module({
     imports: [
@@ -15,9 +15,9 @@ import { ProductComment } from "./entities/product-comment.entity";
             inject: [MulterConfigModule],
             imports: [ConfigModule],
         }),
-        TypeOrmModule.forFeature([Product, ProductComment]),
+        TypeOrmModule.forFeature([Product]),
     ],
-    controllers: [],
+    controllers: [ProductsController],
     providers: [ProductsService],
     exports: [ProductsService],
 })

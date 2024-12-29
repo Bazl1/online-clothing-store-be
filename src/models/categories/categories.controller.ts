@@ -16,7 +16,7 @@ import {
     UseInterceptors,
 } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
-import { CategoryCreateDto } from "./dto/category-create.dto";
+import { CategoryCreateDto } from "./dtos/category-create.dto";
 import {
     ApiResponse,
     createApiOkMessageResponse,
@@ -24,7 +24,7 @@ import {
     createApiOkSingleResponse,
 } from "@/common/interfaces/responses/api-response";
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
-import { CategoryResponseDto } from "./dto/category-response.dto";
+import { CategoryResponseDto } from "./dtos/category-response.dto";
 import {
     ApiBadRequestResponse,
     ApiBody,
@@ -35,12 +35,12 @@ import {
     ApiTags,
     getSchemaPath,
 } from "@nestjs/swagger";
-import { CategoryUpdateDto } from "./dto/category-update.dto";
+import { CategoryUpdateDto } from "./dtos/category-update.dto";
 import { SessionGuard } from "@/common/guards/session.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { CategoryDeleteManyDto } from "./dto/category-delete-many.dto";
-import { CategoryUpdateManyActiveDto } from "./dto/category-update-many-active.dto";
-import { CategoryListResourceDto } from "./dto/category-list-response.dto";
+import { CategoryDeleteManyDto } from "./dtos/category-delete-many.dto";
+import { CategoryUpdateManyActiveDto } from "./dtos/category-update-many-active.dto";
+import { CategoryListResourceDto } from "./dtos/category-list-response.dto";
 
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
@@ -206,8 +206,8 @@ export class CategoriesController {
     })
     @Patch(":id")
     @Serialize(CategoryResponseDto)
+    @UseInterceptors(FileInterceptor("icon"))
     @UseGuards(AdminGuard)
-    // @UseInterceptors(FileInterceptor("icon"))
     async update(
         @Param("id", ParseUUIDPipe) categoryId: string,
         @Body() dto: CategoryUpdateDto,

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
     Between,
@@ -7,7 +7,7 @@ import {
     MoreThanOrEqual,
     Repository,
 } from "typeorm";
-import { Product } from "./entities/product.entity";
+import { Product } from "./product.entity";
 
 @Injectable()
 export class ProductsService {
@@ -71,6 +71,32 @@ export class ProductsService {
 
     async update(id: string, product: Partial<Product>) {
         await this.productRepository.update(id, product);
+        return this.getById(id);
+    }
+
+    async updateMany(ids: string[], product: Partial<Product>) {
+        return this.productRepository.update(ids, product);
+    }
+
+    async updateWithImages(
+        id: string,
+        productUpdatedData: Partial<Product>,
+        deletedFileNames: string[],
+        uploadedFileNames: string[],
+    ) {
+        const product = await this.getById(id);
+
+        if (!product) {
+            throw new NotFoundException("Product not found");
+        }
+
+        await this.productRepository.update(id, {
+            ...productUpdatedData,
+            images: product.images
+                .filter((fileName) => !deletedFileNames.includes(fileName))
+                .concat(uploadedFileNames),
+        });
+
         return this.getById(id);
     }
 

@@ -1,7 +1,10 @@
+import { Product } from "@/models/products/product.entity";
 import {
     Column,
     CreateDateColumn,
     Entity,
+    JoinTable,
+    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -25,6 +28,10 @@ export class Category {
 
     @Column()
     description: string;
+
+    @ManyToOne(() => Product, (product) => product.category)
+    @JoinTable()
+    products: Product[];
 
     @CreateDateColumn({
         name: "created_at",

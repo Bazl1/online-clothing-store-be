@@ -3,7 +3,7 @@ import { UsersService } from "@/models/users/users.service";
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { RegisterDto } from "./dtos/register.dto";
 import { User } from "@/models/users/entities/user.entity";
-import { Session } from "@/models/sessions/entities/session.entity";
+import { Session } from "@/models/sessions/session.entity";
 import { SessionConfig } from "@/config/session/config.service";
 import { LoginDto } from "./dtos/login.dto";
 import { PasswordService } from "./password.service";
