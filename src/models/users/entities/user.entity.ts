@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Address } from "./address.entity";
 import { Product } from "@/models/products/product.entity";
+import { Order } from "@/models/orders/entities/order.entity";
 
 export enum UserRole {
     ADMIN = "admin",
@@ -54,10 +55,6 @@ export class User {
     })
     role: UserRole;
 
-    @ManyToOne(() => Product, (product) => product.id)
-    @JoinTable()
-    product: Product;
-
     @CreateDateColumn({
         name: "created_at",
         type: "timestamp",
@@ -69,6 +66,10 @@ export class User {
         type: "timestamp",
     })
     updatedAt: Date;
+
+    @ManyToOne(() => Order, (order) => order.user)
+    @JoinTable()
+    orders: Order[];
 
     constructor(partial: Partial<User>) {
         Object.assign(this, partial);

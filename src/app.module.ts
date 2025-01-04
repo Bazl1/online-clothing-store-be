@@ -14,6 +14,7 @@ import { MulterConfigModule } from "./config/multer/config.module";
 import { ProductsModule } from "./models/products/products.module";
 import { UploadsModule } from "./uploads/uploads.module";
 import { CommentsModule } from "./models/comments/comments.module";
+import { OrdersModule } from "./models/orders/orders.module";
 
 @Module({
     imports: [
@@ -37,6 +38,7 @@ import { CommentsModule } from "./models/comments/comments.module";
         CategoriesModule,
         ProductsModule,
         CommentsModule,
+        OrdersModule,
 
         // Auth
         AuthModule,

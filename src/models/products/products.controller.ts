@@ -176,18 +176,15 @@ export class ProductsController {
         @Query("search") search: string,
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("maxPrice", ParseIntPipe) maxPrice?: number,
-        @Query("minPrice", ParseIntPipe) minPrice?: number,
-        @Query("sort") sort: "price-asc" | "price-desc" = "price-asc",
     ) {
         const { items, totalItems, totalPages } =
             await this.productsService.getAll(
                 search,
                 page,
                 limit,
-                maxPrice,
-                minPrice,
-                sort,
+                undefined,
+                undefined,
+                undefined,
             );
 
         return createApiOkResponse(items, page, totalItems, totalPages);
@@ -215,9 +212,9 @@ export class ProductsController {
         @Query("search") search: string,
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("maxPrice", ParseIntPipe) maxPrice?: number,
-        @Query("minPrice", ParseIntPipe) minPrice?: number,
         @Query("sort") sort: "price-asc" | "price-desc" = "price-asc",
+        @Query("maxPrice") maxPrice?: number,
+        @Query("minPrice") minPrice?: number,
     ) {
         const { items, totalItems, totalPages } =
             await this.productsService.getAll(
