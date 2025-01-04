@@ -30,6 +30,7 @@ import {
 } from "@/common/interfaces/responses/api-response";
 import {
     ApiBadRequestResponse,
+    ApiConsumes,
     ApiOkResponse,
     getSchemaPath,
 } from "@nestjs/swagger";
@@ -54,6 +55,7 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiConsumes("multipart/form-data")
     @Post()
     @UseGuards(AdminGuard)
     @UseInterceptors(FilesInterceptor("images"))
@@ -107,24 +109,12 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
-    @Patch("/activate")
+    @Patch("actions/toggle-enabled")
     @UseGuards(AdminGuard)
-    async activate(@Body("ids") ids: string[]) {
-        await this.productsService.updateMany(ids, {
-            isActive: true,
-        });
-        return createApiOkMessageResponse("Products activated successfully");
-    }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
-        },
-    })
-    @ApiBadRequestResponse()
-    @Patch("/deactivate")
-    @UseGuards(AdminGuard)
-    async deactivate(@Body("ids") ids: string[]) {
+    async activate(
+        @Body("ids") ids: string[],
+        @Body("isActive") isActive: boolean,
+    ) {
         await this.productsService.updateMany(ids, {
             isActive: true,
         });
@@ -144,7 +134,7 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
-    @Patch("id")
+    @Patch(":id")
     @UseGuards(AdminGuard)
     @UseInterceptors(
         FilesInterceptor("deletedFiles"),
@@ -212,6 +202,46 @@ export class ProductsController {
                 { $ref: getSchemaPath(ApiResponse) },
                 {
                     properties: {
+                        data: {
+                            type: "array",
+                            $ref: getSchemaPath(ProductResponseDto),
+                        },
+                    },
+                },
+            ],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Get("catalog")
+    @Serialize(ProductResponseDto)
+    async getAllFromCatalog(
+        @Query("search") search: string,
+        @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
+        @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query("maxPrice", ParseIntPipe) maxPrice?: number,
+        @Query("minPrice", ParseIntPipe) minPrice?: number,
+        @Query("sort") sort: "price-asc" | "price-desc" = "price-asc",
+    ) {
+        const { items, totalItems, totalPages } =
+            await this.productsService.getAll(
+                search,
+                page,
+                limit,
+                maxPrice,
+                minPrice,
+                sort,
+                true,
+            );
+
+        return createApiOkResponse(items, page, totalItems, totalPages);
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
                         data: { $ref: getSchemaPath(ProductResponseDto) },
                     },
                 },
@@ -219,7 +249,7 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
-    @Get(":id")
+    @Get("catalog/:id")
     @Serialize(ProductResponseDto)
     async getById(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(

@@ -27,6 +27,7 @@ export class ProductsService {
         maxPrice?: number,
         minPrice?: number,
         sort: "price-asc" | "price-desc" = "price-asc",
+        isActive?: boolean,
     ) {
         const where: any = {};
 
@@ -40,6 +41,8 @@ export class ProductsService {
             where.price = MoreThanOrEqual(minPrice);
         } else if (maxPrice !== undefined) {
             where.price = LessThanOrEqual(maxPrice);
+        } else if (isActive !== undefined) {
+            where.isActive = isActive;
         }
 
         const totalItems = await this.productRepository.count({ where });
