@@ -34,7 +34,6 @@ import { UpdateUserWithAddressDto } from "./dtos/update-user-with-address.dto";
 import { CreateUserAddressAdminDto } from "./dtos/create-user.admin-dto";
 import { User } from "./entities/user.entity";
 import { Address } from "./entities/address.entity";
-import data from "@/database/seeders/users/data";
 import { DeleteManyUserAdminDto } from "./dtos/delete-many-user.admin-dto";
 
 @ApiTags("Users")

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsOptional, IsString } from "class-validator";
 
 export class ProductCreateDto {
     @IsString()
@@ -15,8 +15,9 @@ export class ProductCreateDto {
     categoryId: string;
 
     @ApiProperty()
+    @IsOptional()
     @IsString()
-    description: string;
+    description?: string;
 
     @ApiProperty({
         description: "Icon file",
@@ -25,10 +26,9 @@ export class ProductCreateDto {
     images: any[];
 
     @ApiProperty()
-    @IsNumber()
     price: number;
 
     @ApiProperty()
-    @IsNumber()
-    discountPrice: number;
+    @IsOptional()
+    discountPrice?: number;
 }

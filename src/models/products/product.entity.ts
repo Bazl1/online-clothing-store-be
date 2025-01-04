@@ -30,14 +30,18 @@ export class Product {
     @JoinTable()
     comments: Comment[];
 
-    @Column()
-    description: string;
+    @Column({
+        nullable: true,
+    })
+    description?: string;
 
     @Column()
     price: number;
 
-    @Column()
-    discountPrice: number;
+    @Column({
+        nullable: true,
+    })
+    discountPrice?: number;
 
     @Column("simple-array")
     images: string[];

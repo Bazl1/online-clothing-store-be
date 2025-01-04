@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./entities/user.entity";
+import { User, UserRole } from "./entities/user.entity";
 import { Repository } from "typeorm";
 import { UserResetPasswordDto } from "./dtos/user-reset-password.dto";
 import { PasswordService } from "./password.service";
@@ -25,24 +25,24 @@ export class UsersService {
         query: string | undefined,
         page: number,
         limit: number,
-        role: string = "user",
+        role: UserRole = UserRole.USER,
     ) {
         const qb = this.usersRepository.createQueryBuilder("user");
 
         if (query) {
             qb.where(
-                "user.firstName ILIKE :query OR user.lastName ILIKE :query",
+                "(user.firstName ILIKE :query OR user.lastName ILIKE :query)",
                 { query: `%${query}%` },
             ).relation("address");
         }
 
+        qb.andWhere("user.role = :role", { role });
+
         const [users, totalItems] = await qb
-            .andWhere("user.role = :role", { role })
             .orderBy("user.createdAt", "DESC")
             .skip((page - 1) * limit)
             .take(limit)
             .getManyAndCount();
-
         const totalPages = Math.ceil(totalItems / limit);
 
         return { users, totalPages, totalItems };
