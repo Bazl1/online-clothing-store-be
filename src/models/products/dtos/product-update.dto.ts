@@ -22,12 +22,8 @@ export class ProductUpdateDto {
     @IsString()
     description?: string;
 
-    @ApiProperty({
-        description: "Deleted file",
-        format: "binary",
-    })
     @IsOptional()
-    deletedFiles?: any[];
+    deletedFiles?: string[];
 
     @ApiProperty({
         description: "Uploaded file",

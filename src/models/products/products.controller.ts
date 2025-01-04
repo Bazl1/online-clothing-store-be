@@ -134,24 +134,21 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiConsumes("multipart/form-data")
     @Patch(":id")
     @UseGuards(AdminGuard)
-    @UseInterceptors(
-        FilesInterceptor("deletedFiles"),
-        FilesInterceptor("uploadedFiles"),
-    )
+    @UseInterceptors(FilesInterceptor("uploadedFiles"))
     @Serialize(ProductResponseDto)
     async update(
         @Param("id", ParseUUIDPipe) id: string,
         @Body() dto: ProductUpdateDto,
-        @UploadedFile("deletedFiles") deletedFiles: Express.Multer.File[],
         @UploadedFile("uploadedFiles") uploadedFiles: Express.Multer.File[],
     ) {
         return createApiOkSingleResponse(
             await this.productsService.updateWithImages(
                 id,
                 dto,
-                deletedFiles.map((file) => file.filename),
+                dto.deletedFiles,
                 uploadedFiles.map((file) => file.filename),
             ),
         );
