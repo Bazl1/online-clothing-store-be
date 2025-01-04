@@ -4,20 +4,28 @@ import { IsNumber, IsOptional, IsString } from "class-validator";
 export class ProductUpdateDto {
     @IsString()
     @IsOptional()
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     title?: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsString()
     articul?: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsString()
     categoryId?: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsString()
     description?: string;
@@ -28,16 +36,21 @@ export class ProductUpdateDto {
     @ApiProperty({
         description: "Uploaded file",
         format: "binary",
+        required: false,
     })
     @IsOptional()
     uploadedFiles?: any[];
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsNumber()
     price?: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsNumber()
     discountPrice?: number;

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsOptional, IsString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 
 export class ProductCreateDto {
     @IsString()
@@ -14,7 +14,9 @@ export class ProductCreateDto {
     @IsString()
     categoryId: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+    })
     @IsOptional()
     @IsString()
     description?: string;
@@ -28,7 +30,9 @@ export class ProductCreateDto {
     @ApiProperty()
     price: number;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: true,
+    })
     @IsOptional()
     discountPrice?: number;
 }
