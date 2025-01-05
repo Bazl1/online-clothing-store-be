@@ -47,7 +47,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 @ApiTags("Products")
 @ApiExtraModels(ApiResponse, ProductResponseDto)
 @Controller("products")
-@UseGuards(SessionGuard)
 export class ProductsController {
     constructor(
         private readonly productsService: ProductsService,
@@ -314,7 +313,7 @@ export class ProductsController {
         type: "string",
         format: "uuid",
     })
-    @Get("catalog/:id")
+    @Get(":id")
     @Serialize(ProductResponseDto)
     async getById(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(

@@ -3,8 +3,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinTable,
-    OneToMany,
+    ManyToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -18,12 +17,10 @@ export class Comment {
     @Column()
     comment: string;
 
-    @OneToMany(() => Product, (product) => product.comments)
-    @JoinTable()
+    @ManyToOne(() => Product, (product) => product.comments)
     product: Product;
 
-    @OneToMany(() => User, (user) => user.id)
-    @JoinTable()
+    @ManyToOne(() => User, (user) => user.id)
     user: User;
 
     @CreateDateColumn({

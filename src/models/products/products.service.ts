@@ -68,7 +68,7 @@ export class ProductsService {
     async getById(id: string) {
         return this.productRepository.findOne({
             where: { id },
-            relations: ["images"],
+            relations: ["category", "comments"],
         });
     }
 
