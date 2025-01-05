@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
     Between,
+    In,
     LessThanOrEqual,
     Like,
     MoreThanOrEqual,
@@ -68,6 +69,13 @@ export class ProductsService {
     async getById(id: string) {
         return this.productRepository.findOne({
             where: { id },
+            relations: ["category", "comments"],
+        });
+    }
+
+    async getByIds(ids: string[]) {
+        return this.productRepository.find({
+            where: { id: In(ids) },
             relations: ["category", "comments"],
         });
     }

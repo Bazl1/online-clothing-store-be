@@ -116,6 +116,19 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
+    @Post("get")
+    @UseGuards(AdminGuard)
+    async getMany(@Body("ids") ids: string[]) {
+        await this.productsService.deleteMany(ids);
+        return createApiOkMessageResponse("Products deleted successfully");
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
+        },
+    })
+    @ApiBadRequestResponse()
     @Delete(":id")
     @UseGuards(AdminGuard)
     async delete(@Param("id", ParseUUIDPipe) id: string) {
