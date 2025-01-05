@@ -45,7 +45,6 @@ import { CategoryListResourceDto } from "./dtos/category-list-response.dto";
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
 @Controller("categories")
-@UseGuards(SessionGuard)
 export class CategoriesController {
     constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -71,6 +70,7 @@ export class CategoriesController {
     @ApiQuery({ name: "limit", required: false, type: Number })
     @ApiQuery({ name: "query", required: false, type: String })
     @Get()
+    @UseGuards(SessionGuard)
     @Serialize(CategoryResponseDto)
     async search(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -120,6 +120,7 @@ export class CategoriesController {
     @ApiBadRequestResponse()
     @Post("delete")
     @Serialize(CategoryResponseDto)
+    @UseGuards(SessionGuard)
     @UseGuards(AdminGuard)
     async deleteMany(@Body() dto: CategoryDeleteManyDto) {
         await this.categoriesService.deleteMany(dto.ids);
@@ -143,6 +144,7 @@ export class CategoriesController {
     })
     @ApiBadRequestResponse()
     @Get(":id")
+    @UseGuards(SessionGuard)
     @Serialize(CategoryResponseDto)
     async getById(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(
