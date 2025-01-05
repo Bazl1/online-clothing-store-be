@@ -22,12 +22,10 @@ export class Product {
     @Column()
     title: string;
 
-    @OneToMany(() => Category, (category) => category.products)
-    @JoinTable()
+    @ManyToOne(() => Category, (category) => category.products, { eager: true })
     category: Category;
 
-    @ManyToOne(() => Comment, (comment) => comment.product)
-    @JoinTable()
+    @OneToMany(() => Comment, (comment) => comment.product, { eager: true })
     comments: Comment[];
 
     @Column({
@@ -46,7 +44,10 @@ export class Product {
     @Column("simple-array")
     images: string[];
 
-    @Column()
+    @Column({
+        type: "boolean",
+        default: true,
+    })
     isActive: boolean;
 
     @CreateDateColumn({

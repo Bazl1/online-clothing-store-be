@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     DefaultValuePipe,
@@ -31,16 +32,28 @@ import {
 import {
     ApiBadRequestResponse,
     ApiConsumes,
+    ApiExtraModels,
     ApiOkResponse,
+    ApiParam,
+    ApiQuery,
+    ApiTags,
     getSchemaPath,
 } from "@nestjs/swagger";
 import { Product } from "./product.entity";
 import { Category } from "../categories/category.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 
+@ApiTags("Products")
+@ApiExtraModels(ApiResponse, ProductResponseDto)
 @Controller("products")
 @UseGuards(SessionGuard)
 export class ProductsController {
-    constructor(private readonly productsService: ProductsService) {}
+    constructor(
+        private readonly productsService: ProductsService,
+        @InjectRepository(Category)
+        private readonly categoryRepository: Repository<Category>,
+    ) {}
 
     @ApiOkResponse({
         schema: {
@@ -64,14 +77,22 @@ export class ProductsController {
         @Body() dto: ProductCreateDto,
         @UploadedFile() images: Express.Multer.File[],
     ) {
+        const category = await this.categoryRepository.findOne({
+            where: {
+                id: dto.categoryId,
+            },
+        });
+
+        if (!category) {
+            throw new BadRequestException("Category does not exist");
+        }
+
         return createApiOkSingleResponse(
             await this.productsService.create(
                 new Product({
                     ...dto,
-                    category: new Category({
-                        id: dto.categoryId,
-                    }),
-                    images: images.map((image) => image.filename),
+                    category: category,
+                    images: images?.map((image) => image.filename) ?? [],
                 }),
             ),
         );
@@ -170,6 +191,21 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiQuery({
+        name: "search",
+        required: false,
+        type: String,
+    })
+    @ApiQuery({
+        name: "page",
+        required: false,
+        type: Number,
+    })
+    @ApiQuery({
+        name: "limit",
+        required: false,
+        type: Number,
+    })
     @Get()
     @Serialize(ProductResponseDto)
     async getAll(
@@ -206,6 +242,36 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiQuery({
+        name: "search",
+        required: false,
+        type: String,
+    })
+    @ApiQuery({
+        name: "page",
+        required: false,
+        type: Number,
+    })
+    @ApiQuery({
+        name: "limit",
+        required: false,
+        type: Number,
+    })
+    @ApiQuery({
+        name: "sort",
+        required: false,
+        enum: ["price-asc", "price-desc"],
+    })
+    @ApiQuery({
+        name: "maxPrice",
+        required: false,
+        type: Number,
+    })
+    @ApiQuery({
+        name: "minPrice",
+        required: false,
+        type: Number,
+    })
     @Get("catalog")
     @Serialize(ProductResponseDto)
     async getAllFromCatalog(
@@ -243,6 +309,11 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiParam({
+        name: "id",
+        type: "string",
+        format: "uuid",
+    })
     @Get("catalog/:id")
     @Serialize(ProductResponseDto)
     async getById(@Param("id", ParseUUIDPipe) id: string) {

@@ -7,6 +7,7 @@ import { MulterConfigModule } from "@/config/multer/config.module";
 import { ConfigModule } from "@nestjs/config";
 import { ProductsService } from "./products.service";
 import { ProductsController } from "./products.controller";
+import { Category } from "../categories/category.entity";
 
 @Module({
     imports: [
@@ -15,7 +16,7 @@ import { ProductsController } from "./products.controller";
             inject: [MulterConfigModule],
             imports: [ConfigModule],
         }),
-        TypeOrmModule.forFeature([Product]),
+        TypeOrmModule.forFeature([Product, Category]),
     ],
     controllers: [ProductsController],
     providers: [ProductsService],

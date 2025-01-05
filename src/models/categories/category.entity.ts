@@ -3,8 +3,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinTable,
-    ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -29,8 +28,7 @@ export class Category {
     @Column()
     description: string;
 
-    @ManyToOne(() => Product, (product) => product.category)
-    @JoinTable()
+    @OneToMany(() => Product, (product) => product.category)
     products: Product[];
 
     @CreateDateColumn({
