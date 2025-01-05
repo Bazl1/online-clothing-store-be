@@ -320,4 +320,30 @@ export class ProductsController {
             await this.productsService.getById(id),
         );
     }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
+                        data: { $ref: getSchemaPath(ProductResponseDto) },
+                    },
+                },
+            ],
+        },
+    })
+    @ApiBadRequestResponse()
+    @ApiParam({
+        name: "id",
+        type: "string",
+        format: "uuid",
+    })
+    @Get("catalog/:id")
+    @Serialize(ProductResponseDto)
+    async catalogGetById(@Param("id", ParseUUIDPipe) id: string) {
+        return createApiOkSingleResponse(
+            await this.productsService.getById(id),
+        );
+    }
 }
