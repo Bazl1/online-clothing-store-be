@@ -45,13 +45,11 @@ export class ProductUpdateDto {
         required: false,
     })
     @IsOptional()
-    @IsNumber()
     price?: number;
 
     @ApiProperty({
         required: false,
     })
     @IsOptional()
-    @IsNumber()
     discountPrice?: number;
 }
