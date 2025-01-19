@@ -12,11 +12,11 @@ import {
     Post,
     Query,
     UploadedFile,
+    UploadedFiles,
     UseGuards,
     UseInterceptors,
 } from "@nestjs/common";
 import { ProductsService } from "./products.service";
-import { SessionGuard } from "@/common/guards/session.guard";
 import { AdminGuard } from "@/common/guards/admin.guard";
 import { ProductCreateDto } from "./dtos/product-create.dto";
 import { FilesInterceptor } from "@nestjs/platform-express";
@@ -74,7 +74,7 @@ export class ProductsController {
     @Serialize(ProductResponseDto)
     async create(
         @Body() dto: ProductCreateDto,
-        @UploadedFile() images: Express.Multer.File[],
+        @UploadedFiles() images: Express.Multer.File[],
     ) {
         const category = await this.categoryRepository.findOne({
             where: {
@@ -149,9 +149,11 @@ export class ProductsController {
         @Body("isActive") isActive: boolean,
     ) {
         await this.productsService.updateMany(ids, {
-            isActive: true,
+            isActive,
         });
-        return createApiOkMessageResponse("Products activated successfully");
+        return createApiOkMessageResponse(
+            "Products active status changed successfully",
+        );
     }
 
     @ApiOkResponse({
