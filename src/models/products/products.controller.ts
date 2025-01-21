@@ -177,14 +177,25 @@ export class ProductsController {
     async update(
         @Param("id", ParseUUIDPipe) id: string,
         @Body() dto: ProductUpdateDto,
-        @UploadedFile("uploadedFiles") uploadedFiles: Express.Multer.File[],
+        @UploadedFiles() uploadedFiles: Express.Multer.File[],
     ) {
+        let category: Category | undefined;
+        if (dto.categoryId) {
+            category = await this.categoryRepository.findOne({
+                where: {
+                    id: dto.categoryId,
+                },
+            });
+
+            delete dto.categoryId;
+        }
+
         return createApiOkSingleResponse(
             await this.productsService.updateWithImages(
                 id,
-                dto,
-                dto.deletedFiles,
-                uploadedFiles.map((file) => file.filename),
+                { ...dto, category },
+                dto.deletedFiles ?? [],
+                uploadedFiles?.map((file) => file.filename) ?? [],
             ),
         );
     }

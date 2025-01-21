@@ -22,7 +22,7 @@ export class Product {
     @Column()
     title: string;
 
-    @ManyToOne(() => Category, (category) => category.products, { eager: true })
+    @ManyToOne(() => Category, (category) => category.products)
     category: Category;
 
     @OneToMany(() => Comment, (comment) => comment.product)
