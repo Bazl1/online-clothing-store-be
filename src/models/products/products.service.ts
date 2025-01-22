@@ -57,6 +57,7 @@ export class ProductsService {
             },
             take: limit,
             skip: (page - 1) * limit,
+            relations: ["category"],
         });
 
         return {

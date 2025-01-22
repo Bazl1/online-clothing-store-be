@@ -11,7 +11,6 @@ import {
     Patch,
     Post,
     Query,
-    UploadedFile,
     UploadedFiles,
     UseGuards,
     UseInterceptors,
@@ -193,7 +192,14 @@ export class ProductsController {
         return createApiOkSingleResponse(
             await this.productsService.updateWithImages(
                 id,
-                { ...dto, category },
+                {
+                    ...dto,
+                    discountPrice:
+                        dto.discountPrice.length === 0
+                            ? undefined
+                            : Number(dto.discountPrice),
+                    category,
+                },
                 dto.deletedFiles ?? [],
                 uploadedFiles?.map((file) => file.filename) ?? [],
             ),

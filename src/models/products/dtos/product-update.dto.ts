@@ -51,5 +51,5 @@ export class ProductUpdateDto {
         required: false,
     })
     @IsOptional()
-    discountPrice?: number;
+    discountPrice?: string;
 }

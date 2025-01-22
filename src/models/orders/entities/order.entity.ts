@@ -10,6 +10,7 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import { OrderItem } from "./order-item.entity";
+import { OrderStatus } from "./order-status";
 
 @Entity("orders")
 export class Order {
@@ -23,6 +24,16 @@ export class Order {
     @OneToMany(() => User, (user) => user.orders)
     @JoinColumn()
     user: User;
+
+    @Column({
+        type: "enum",
+        enum: OrderStatus,
+        default: OrderStatus.Pending,
+    })
+    status: OrderStatus;
+
+    @Column()
+    totalPrice: number;
 
     @Column()
     country: string;
