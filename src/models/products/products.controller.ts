@@ -118,7 +118,7 @@ export class ProductsController {
     @Post("get")
     @UseGuards(AdminGuard)
     async getMany(@Body("ids") ids: string[]) {
-        await this.productsService.deleteMany(ids);
+        await this.productsService.getByIds(ids);
         return createApiOkMessageResponse("Products deleted successfully");
     }
 
@@ -189,6 +189,12 @@ export class ProductsController {
             delete dto.categoryId;
         }
 
+        let deletedFiles: string[];
+        if (dto.deletedFiles) {
+            deletedFiles = dto.deletedFiles;
+            delete dto.deletedFiles;
+        }
+
         return createApiOkSingleResponse(
             await this.productsService.updateWithImages(
                 id,
@@ -200,7 +206,7 @@ export class ProductsController {
                             : Number(dto.discountPrice),
                     category,
                 },
-                dto.deletedFiles ?? [],
+                deletedFiles ?? [],
                 uploadedFiles?.map((file) => file.filename) ?? [],
             ),
         );
@@ -245,14 +251,7 @@ export class ProductsController {
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
     ) {
         const { items, totalItems, totalPages } =
-            await this.productsService.getAll(
-                search,
-                page,
-                limit,
-                undefined,
-                undefined,
-                undefined,
-            );
+            await this.productsService.getAll(search, page, limit);
 
         return createApiOkResponse(items, page, totalItems, totalPages);
     }
@@ -291,7 +290,7 @@ export class ProductsController {
     @ApiQuery({
         name: "sort",
         required: false,
-        enum: ["price-asc", "price-desc"],
+        enum: ["price-asc", "price-desc", "created-desc", "created-asc"],
     })
     @ApiQuery({
         name: "maxPrice",
@@ -303,15 +302,21 @@ export class ProductsController {
         required: false,
         type: Number,
     })
-    @Get("catalog")
+    @Post("catalog")
     @Serialize(ProductResponseDto)
     async getAllFromCatalog(
         @Query("search") search: string,
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("sort") sort: "price-asc" | "price-desc" = "price-asc",
+        @Query("sort")
+        sort:
+            | "price-asc"
+            | "price-desc"
+            | "created-desc"
+            | "created-asc" = "created-desc",
         @Query("maxPrice") maxPrice?: number,
         @Query("minPrice") minPrice?: number,
+        @Body("categoryIds") categoryIds?: string[],
     ) {
         const { items, totalItems, totalPages } =
             await this.productsService.getAll(
@@ -322,6 +327,7 @@ export class ProductsController {
                 minPrice,
                 sort,
                 true,
+                categoryIds,
             );
 
         return createApiOkResponse(items, page, totalItems, totalPages);

@@ -27,23 +27,34 @@ export class ProductsService {
         limit: number,
         maxPrice?: number,
         minPrice?: number,
-        sort: "price-asc" | "price-desc" = "price-asc",
+        sort:
+            | "price-asc"
+            | "price-desc"
+            | "created-desc"
+            | "created-asc" = "created-desc",
         isActive?: boolean,
+        categoryIds?: string[],
     ) {
         const where: any = {};
 
         if (search) {
-            where.name = Like(`%${search}%`);
+            where.title = Like(`%${search}%`);
         }
 
         if (minPrice !== undefined && maxPrice !== undefined) {
             where.price = Between(minPrice, maxPrice);
-        } else if (minPrice !== undefined) {
+        }
+        if (minPrice !== undefined) {
             where.price = MoreThanOrEqual(minPrice);
-        } else if (maxPrice !== undefined) {
+        }
+        if (maxPrice !== undefined) {
             where.price = LessThanOrEqual(maxPrice);
-        } else if (isActive !== undefined) {
+        }
+        if (isActive !== undefined) {
             where.isActive = isActive;
+        }
+        if (categoryIds && categoryIds.length) {
+            where.category = In(categoryIds);
         }
 
         const totalItems = await this.productRepository.count({ where });
@@ -53,7 +64,12 @@ export class ProductsService {
         const items = await this.productRepository.find({
             where,
             order: {
-                price: sort === "price-asc" ? "ASC" : "DESC",
+                ...((sort === "price-asc" || sort === "price-desc") && {
+                    price: sort === "price-asc" ? "ASC" : "DESC",
+                }),
+                ...((sort === "created-asc" || sort === "created-desc") && {
+                    createdAt: sort === "created-asc" ? "ASC" : "DESC",
+                }),
             },
             take: limit,
             skip: (page - 1) * limit,
@@ -77,6 +93,9 @@ export class ProductsService {
     async getByIds(ids: string[]) {
         return this.productRepository.find({
             where: { id: In(ids) },
+            order: {
+                createdAt: "ASC",
+            },
             relations: ["category", "comments"],
         });
     }
