@@ -31,7 +31,7 @@ export class ProductsService {
             | "price-asc"
             | "price-desc"
             | "created-desc"
-            | "created-asc" = "created-desc",
+            | "created-asc" = "created-asc",
         isActive?: boolean,
         categoryIds?: string[],
     ) {
