@@ -75,4 +75,12 @@ export class CategoriesService {
     async deleteMany(ids: string[]) {
         return this.categoryRepository.delete(ids);
     }
+
+    async getCatalog(limit?: number) {
+        return this.categoryRepository.find({
+            where: { isActive: true },
+            order: { createdAt: "DESC" },
+            ...(limit !== 0 && { take: limit }),
+        });
+    }
 }

@@ -1,6 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class OrderItemCreateDto {
+export class OrderItemUpdateDto {
+    @ApiProperty({
+        required: false,
+    })
+    id?: string;
+
     @ApiProperty()
     productId: string;
 

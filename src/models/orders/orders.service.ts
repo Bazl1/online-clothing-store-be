@@ -7,6 +7,7 @@ import { OrderCreateDto } from "./dtos/order-create.dto";
 import { User } from "../users/entities/user.entity";
 import { OrderItem } from "./entities/order-item.entity";
 import { Product } from "../products/product.entity";
+import { OrderUpdateDto } from "./dtos/order-update.dto";
 
 @Injectable()
 export class OrdersService {
@@ -19,12 +20,17 @@ export class OrdersService {
         private readonly productRepository: Repository<Product>,
     ) {}
 
-    async get(page: number, limit: number) {
+    async get(page: number, limit: number, orderId?: string) {
         const totalItems = await this.orderRepository.count();
 
         const totalPages = Math.ceil(totalItems / limit);
 
         const items = await this.orderRepository.find({
+            ...(orderId && {
+                where: {
+                    id: orderId,
+                },
+            }),
             order: {
                 createdAt: "ASC",
             },
@@ -40,10 +46,10 @@ export class OrdersService {
         };
     }
 
-    async history(page: number, limit: number) {
+    async historyGetAll(page: number, limit: number) {
         const totalItems = await this.orderRepository.count({
             where: {
-                status: OrderStatus.Pending,
+                status: OrderStatus.Completed || OrderStatus.Cancelled,
             },
         });
 
@@ -51,7 +57,7 @@ export class OrdersService {
 
         const items = await this.orderRepository.find({
             where: {
-                status: OrderStatus.Pending,
+                status: OrderStatus.Completed || OrderStatus.Cancelled,
             },
             order: {
                 createdAt: "ASC",
@@ -66,6 +72,16 @@ export class OrdersService {
             totalPages,
             items,
         };
+    }
+
+    async historyGetById(id: string) {
+        return this.orderRepository.findOne({
+            where: {
+                status: OrderStatus.Completed || OrderStatus.Cancelled,
+                id,
+            },
+            relations: ["user", "items"],
+        });
     }
 
     async getById(id: string) {
@@ -79,21 +95,15 @@ export class OrdersService {
 
     async create(user: User, dto: OrderCreateDto) {
         const items = await Promise.all(
-            dto.items.map(async (item) => {
-                const product = await this.productRepository.findOne({
-                    where: {
-                        id: item.productId,
-                    },
-                });
-
-                const orderItem = new OrderItem({
-                    product: product,
-                    price: product.price,
-                    quantity: item.quantity,
-                });
-
-                return this.orderItemRepository.save(orderItem);
-            }),
+            dto.items.map(
+                async (item) =>
+                    new OrderItem({
+                        product: new Product({
+                            id: item.productId,
+                        }),
+                        quantity: item.quantity,
+                    }),
+            ),
         );
 
         const order = new Order({
@@ -110,7 +120,42 @@ export class OrdersService {
         return this.orderRepository.save(order);
     }
 
-    async update() {}
+    async update(id: string, dto: OrderUpdateDto) {
+        const order = await this.orderRepository.findOne({
+            where: {
+                id,
+            },
+            relations: ["items"],
+        });
+
+        if (!order) {
+            throw new Error("Order not found");
+        }
+
+        for (const orderItem of order.items) {
+            if (
+                dto.items.every((item) => item.id && item.id !== orderItem.id)
+            ) {
+                await this.orderItemRepository.delete(orderItem.product.id);
+            }
+        }
+
+        const items = await Promise.all(
+            dto.items.map(
+                async (item) =>
+                    new OrderItem({
+                        product: new Product({
+                            id: item.productId,
+                        }),
+                        quantity: item.quantity,
+                    }),
+            ),
+        );
+
+        order.items = items;
+
+        return this.orderRepository.save(order);
+    }
 
     async delete(id: string) {
         await this.orderRepository.delete(id);

@@ -1,10 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { OrderItemCreateDto } from "./order-item-create.dto";
+import { OrderItemUpdateDto } from "./order-item-update.dto";
 
-export class OrderCreateDto {
-    @ApiProperty()
-    userId: string;
-
+export class OrderUpdateDto {
     @ApiProperty()
     country: string;
 
@@ -30,5 +27,5 @@ export class OrderCreateDto {
     zip: string;
 
     @ApiProperty()
-    items: OrderItemCreateDto[];
+    items: OrderItemUpdateDto[];
 }

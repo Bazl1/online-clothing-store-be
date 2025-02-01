@@ -21,7 +21,7 @@ export class ProductsService {
         return this.productRepository.save(data);
     }
 
-    async getAll(
+    async catalogGetAll(
         search: string,
         page: number,
         limit: number,
@@ -35,7 +35,9 @@ export class ProductsService {
         isActive?: boolean,
         categoryIds?: string[],
     ) {
-        const where: any = {};
+        const where: any = {
+            isActive: true,
+        };
 
         if (search) {
             where.title = Like(`%${search}%`);
@@ -93,6 +95,23 @@ export class ProductsService {
     async getByIds(ids: string[]) {
         return this.productRepository.find({
             where: { id: In(ids) },
+            order: {
+                createdAt: "ASC",
+            },
+            relations: ["category", "comments"],
+        });
+    }
+
+    async catalogGetById(id: string) {
+        return this.productRepository.findOne({
+            where: { id, isActive: true },
+            relations: ["category", "comments"],
+        });
+    }
+
+    async catalogGetByIds(ids: string[]) {
+        return this.productRepository.find({
+            where: { id: In(ids), isActive: true },
             order: {
                 createdAt: "ASC",
             },

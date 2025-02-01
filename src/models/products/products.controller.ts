@@ -251,7 +251,7 @@ export class ProductsController {
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
     ) {
         const { items, totalItems, totalPages } =
-            await this.productsService.getAll(search, page, limit);
+            await this.productsService.catalogGetAll(search, page, limit);
 
         return createApiOkResponse(items, page, totalItems, totalPages);
     }
@@ -319,7 +319,7 @@ export class ProductsController {
         @Body("categoryIds") categoryIds?: string[],
     ) {
         const { items, totalItems, totalPages } =
-            await this.productsService.getAll(
+            await this.productsService.catalogGetAll(
                 search,
                 page,
                 limit,
@@ -354,9 +354,13 @@ export class ProductsController {
     @Get(":id")
     @Serialize(ProductResponseDto)
     async getById(@Param("id", ParseUUIDPipe) id: string) {
-        return createApiOkSingleResponse(
-            await this.productsService.getById(id),
-        );
+        const product = await this.productsService.catalogGetById(id);
+
+        if (!product) {
+            throw new BadRequestException("Product does not exist");
+        }
+
+        return createApiOkSingleResponse(product);
     }
 
     @ApiOkResponse({
@@ -382,6 +386,32 @@ export class ProductsController {
     async catalogGetById(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(
             await this.productsService.getById(id),
+        );
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
+                        data: { $ref: getSchemaPath(ProductResponseDto) },
+                    },
+                },
+            ],
+        },
+    })
+    @ApiBadRequestResponse()
+    @ApiParam({
+        name: "id",
+        type: "string",
+        format: "uuid",
+    })
+    @Post("catalog")
+    @Serialize(ProductResponseDto)
+    async catalogGetByIds(@Body("productIds") ids: string[]) {
+        return createApiOkSingleResponse(
+            await this.productsService.catalogGetByIds(ids),
         );
     }
 }

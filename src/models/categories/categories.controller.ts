@@ -41,6 +41,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { CategoryDeleteManyDto } from "./dtos/category-delete-many.dto";
 import { CategoryUpdateManyActiveDto } from "./dtos/category-update-many-active.dto";
 import { CategoryListResourceDto } from "./dtos/category-list-response.dto";
+import { CategoryCatalogResourceDto } from "./dtos/category-catalog-response.dto";
 
 @ApiTags("Categories")
 @ApiExtraModels(ApiResponse, CategoryResponseDto)
@@ -261,5 +262,30 @@ export class CategoriesController {
     async delete(@Param("id", ParseUUIDPipe) categoryId: string) {
         await this.categoriesService.delete(categoryId);
         return createApiOkMessageResponse("Category deleted successfully");
+    }
+
+    @ApiOkResponse({
+        schema: {
+            allOf: [
+                { $ref: getSchemaPath(ApiResponse) },
+                {
+                    properties: {
+                        data: {
+                            $ref: getSchemaPath(CategoryCatalogResourceDto),
+                        },
+                    },
+                },
+            ],
+        },
+    })
+    @ApiBadRequestResponse()
+    @Get("catalog")
+    @Serialize(CategoryCatalogResourceDto)
+    async getCatalog(
+        @Query("limit", new DefaultValuePipe(0), ParseIntPipe) limit?: number,
+    ) {
+        return createApiOkResponse(
+            await this.categoriesService.getCatalog(limit),
+        );
     }
 }
