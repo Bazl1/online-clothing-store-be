@@ -14,8 +14,8 @@ import { OrderStatus } from "./order-status";
 
 @Entity("orders")
 export class Order {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
     @ManyToOne(() => OrderItem, (item) => item.order)
     @JoinColumn()

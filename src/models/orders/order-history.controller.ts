@@ -68,7 +68,7 @@ export class OrderHistoryController {
     @ApiBadRequestResponse()
     @Get(":id")
     @Serialize(OrderResponseDto)
-    async getById(@Param("id") id: string) {
+    async getById(@Param("id") id: number) {
         return createApiOkSingleResponse(
             await this.ordersService.historyGetById(id),
         );

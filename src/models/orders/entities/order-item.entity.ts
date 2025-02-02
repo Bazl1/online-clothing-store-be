@@ -13,8 +13,8 @@ import { Order } from "./order.entity";
 
 @Entity("order_items")
 export class OrderItem {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
     @OneToOne(() => Product)
     @JoinColumn()

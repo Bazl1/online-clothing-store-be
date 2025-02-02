@@ -11,7 +11,7 @@ export class AddressesService {
         private readonly addressesRepository: Repository<Address>,
     ) {}
 
-    async getById(id: string) {
+    async getById(id: number) {
         return this.addressesRepository.findOne({
             where: { id },
             relations: ["user"],
@@ -23,7 +23,7 @@ export class AddressesService {
         return this.addressesRepository.save(data);
     }
 
-    async update(id: string, data: Partial<Address>) {
+    async update(id: number, data: Partial<Address>) {
         await this.addressesRepository.update(id, data);
         return this.getById(id);
     }
@@ -36,7 +36,7 @@ export class AddressesService {
         return this.create(data, user);
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         return this.addressesRepository.delete(id);
     }
 }

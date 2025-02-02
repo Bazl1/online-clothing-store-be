@@ -10,7 +10,7 @@ export class SessionsService {
         private readonly sessionsRepository: Repository<Session>,
     ) {}
 
-    async getById(id: string) {
+    async getById(id: number) {
         return this.sessionsRepository.findOne({
             where: { id },
             relations: ["user", "user.address"],
@@ -21,9 +21,9 @@ export class SessionsService {
         return this.sessionsRepository.save(data);
     }
 
-    async delete(sessionId: string) {
+    async delete(sessionId: number) {
         return this.sessionsRepository.delete({ id: sessionId });
     }
 
-    async validateSession(id: string) {}
+    async validateSession(id: number) {}
 }

@@ -163,7 +163,7 @@ export class UsersController {
     @ApiBadRequestResponse()
     @Get(":id")
     @Serialize(UserResponseDto)
-    async getById(@Param("id", ParseUUIDPipe) userId: string) {
+    async getById(@Param("id") userId: number) {
         return createApiOkResponse(await this.usersService.getById(userId));
     }
 
@@ -182,7 +182,7 @@ export class UsersController {
     @Patch(":id")
     @Serialize(UserResponseDto)
     async update(
-        @Param("id", ParseUUIDPipe) userId: string,
+        @Param("id") userId: number,
         @Body() dto: UpdateUserWithAddressDto,
     ) {
         return createApiOkSingleResponse(
@@ -197,7 +197,7 @@ export class UsersController {
     })
     @Delete(":id")
     @Serialize(UserResponseDto)
-    async delete(@Param("id", ParseUUIDPipe) userId: string) {
+    async delete(@Param("id") userId: number) {
         await this.usersService.delete(userId);
         return createApiOkMessageResponse("User deleted");
     }

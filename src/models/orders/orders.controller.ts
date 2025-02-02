@@ -59,7 +59,7 @@ export class OrdersController {
     async get(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("orderId") orderId?: string,
+        @Query("orderId") orderId?: number,
     ) {
         const { totalItems, totalPages, items } = await this.ordersService.get(
             page,
@@ -91,7 +91,7 @@ export class OrdersController {
     })
     @Get(":id")
     @Serialize(OrderResponseDto)
-    async getById(@Param("id") id: string) {
+    async getById(@Param("id") id: number) {
         return createApiOkSingleResponse(await this.ordersService.getById(id));
     }
 
@@ -161,7 +161,7 @@ export class OrdersController {
     })
     @Patch(":id")
     @Serialize(OrderResponseDto)
-    async update(@Param("id") id: string, @Body() dto: OrderUpdateDto) {
+    async update(@Param("id") id: number, @Body() dto: OrderUpdateDto) {
         return createApiOkSingleResponse(
             await this.ordersService.update(id, dto),
         );
@@ -181,7 +181,7 @@ export class OrdersController {
     })
     @Delete(":id")
     @Serialize(OrderResponseDto)
-    async delete(@Param("id") id: string) {
+    async delete(@Param("id") id: number) {
         await this.ordersService.delete(id);
         return createApiOkMessageResponse("Order deleted");
     }

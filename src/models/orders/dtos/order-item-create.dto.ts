@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class OrderItemCreateDto {
     @ApiProperty()
-    productId: string;
+    productId: number;
 
     @ApiProperty()
     quantity: number;

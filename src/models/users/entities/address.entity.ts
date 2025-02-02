@@ -9,8 +9,8 @@ import {
 
 @Entity("addresses")
 export class Address {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
     @Column()
     country: string;

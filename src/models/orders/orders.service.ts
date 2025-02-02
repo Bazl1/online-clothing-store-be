@@ -20,7 +20,7 @@ export class OrdersService {
         private readonly productRepository: Repository<Product>,
     ) {}
 
-    async get(page: number, limit: number, orderId?: string) {
+    async get(page: number, limit: number, orderId?: number) {
         const totalItems = await this.orderRepository.count();
 
         const totalPages = Math.ceil(totalItems / limit);
@@ -74,7 +74,7 @@ export class OrdersService {
         };
     }
 
-    async historyGetById(id: string) {
+    async historyGetById(id: number) {
         return this.orderRepository.findOne({
             where: {
                 status: OrderStatus.Completed || OrderStatus.Cancelled,
@@ -84,7 +84,7 @@ export class OrdersService {
         });
     }
 
-    async getById(id: string) {
+    async getById(id: number) {
         return this.orderRepository.findOne({
             where: {
                 id,
@@ -120,7 +120,7 @@ export class OrdersService {
         return this.orderRepository.save(order);
     }
 
-    async update(id: string, dto: OrderUpdateDto) {
+    async update(id: number, dto: OrderUpdateDto) {
         const order = await this.orderRepository.findOne({
             where: {
                 id,
@@ -157,7 +157,7 @@ export class OrdersService {
         return this.orderRepository.save(order);
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         await this.orderRepository.delete(id);
     }
 }

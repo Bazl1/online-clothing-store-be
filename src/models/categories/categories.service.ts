@@ -43,13 +43,13 @@ export class CategoriesService {
         });
     }
 
-    async getById(id: string) {
+    async getById(id: number) {
         return this.categoryRepository.findOne({
             where: { id },
         });
     }
 
-    async getByIds(ids: string[]) {
+    async getByIds(ids: number[]) {
         return this.categoryRepository.find({
             where: {
                 id: In(ids),
@@ -58,21 +58,21 @@ export class CategoriesService {
         });
     }
 
-    async update(id: string, data: Partial<Category>) {
+    async update(id: number, data: Partial<Category>) {
         await this.categoryRepository.update(id, data);
         return this.getById(id);
     }
 
-    async updateMany(ids: string[], data: Partial<Category>) {
+    async updateMany(ids: number[], data: Partial<Category>) {
         await this.categoryRepository.update(ids, data);
         return this.getByIds(ids);
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         return this.categoryRepository.delete(id);
     }
 
-    async deleteMany(ids: string[]) {
+    async deleteMany(ids: number[]) {
         return this.categoryRepository.delete(ids);
     }
 

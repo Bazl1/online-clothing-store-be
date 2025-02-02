@@ -14,7 +14,7 @@ export class CommentsService {
         return await this.commentsRepository.save(data);
     }
 
-    async getAll(productId: string, page: number, limit: number) {
+    async getAll(productId: number, page: number, limit: number) {
         const where: any = {
             product: {
                 id: productId,
@@ -36,7 +36,7 @@ export class CommentsService {
         };
     }
 
-    async getById(productCommentId: string) {
+    async getById(productCommentId: number) {
         return await this.commentsRepository.find({
             where: {
                 id: productCommentId,
@@ -44,7 +44,7 @@ export class CommentsService {
         });
     }
 
-    async update(productCommentId: string, data: Partial<Comment>) {
+    async update(productCommentId: number, data: Partial<Comment>) {
         if (!(await this.getById(productCommentId))) {
             throw new Error("Product comment not found");
         }
@@ -52,11 +52,11 @@ export class CommentsService {
         return this.commentsRepository.update(productCommentId, data);
     }
 
-    async delete(productCommentId: string) {
+    async delete(productCommentId: number) {
         return this.commentsRepository.delete(productCommentId);
     }
 
-    async deleteMany(productCommentIds: string[]) {
+    async deleteMany(productCommentIds: number[]) {
         return this.commentsRepository.delete(productCommentIds);
     }
 }

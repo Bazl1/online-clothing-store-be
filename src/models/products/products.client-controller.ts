@@ -108,7 +108,7 @@ export class ProductsClientController {
             | "created-asc" = "created-desc",
         @Query("maxPrice") maxPrice?: number,
         @Query("minPrice") minPrice?: number,
-        @Body("categoryIds") categoryIds?: string[],
+        @Body("categoryIds") categoryIds?: number[],
     ) {
         const { items, totalItems, totalPages } =
             await this.productsService.catalogGetAll(
@@ -144,7 +144,7 @@ export class ProductsClientController {
     })
     @Get(":id")
     @Serialize(ProductResponseDto)
-    async catalogGetById(@Param("id", ParseUUIDPipe) id: string) {
+    async catalogGetById(@Param("id") id: number) {
         return createApiOkSingleResponse(
             await this.productsService.catalogGetById(id),
         );
@@ -179,7 +179,7 @@ export class ProductsClientController {
     })
     @Post("ids")
     @Serialize(ProductResponseDto)
-    async catalogGetByIds(@Body("productIds") ids: string[]) {
+    async catalogGetByIds(@Body("productIds") ids: number[]) {
         return createApiOkSingleResponse(
             await this.productsService.catalogGetByIds(ids),
         );

@@ -10,8 +10,8 @@ import {
 
 @Entity("categories")
 export class Category {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
     @Column({
         type: "boolean",

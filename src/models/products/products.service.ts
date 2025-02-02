@@ -32,7 +32,7 @@ export class ProductsService {
             | "price-desc"
             | "created-desc"
             | "created-asc" = "created-asc",
-        categoryIds?: string[],
+        categoryIds?: number[],
     ) {
         const queryBuilder = this.productRepository
             .createQueryBuilder("product")
@@ -110,7 +110,7 @@ export class ProductsService {
             | "created-desc"
             | "created-asc" = "created-asc",
         isActive?: boolean,
-        categoryIds?: string[],
+        categoryIds?: number[],
     ) {
         const where: any = {};
 
@@ -164,14 +164,14 @@ export class ProductsService {
         };
     }
 
-    async getById(id: string) {
+    async getById(id: number) {
         return this.productRepository.findOne({
             where: { id },
             relations: ["category", "comments"],
         });
     }
 
-    async getByIds(ids: string[]) {
+    async getByIds(ids: number[]) {
         return this.productRepository.find({
             where: { id: In(ids) },
             order: {
@@ -181,14 +181,14 @@ export class ProductsService {
         });
     }
 
-    async catalogGetById(id: string) {
+    async catalogGetById(id: number) {
         return this.productRepository.findOne({
             where: { id, isActive: true },
             relations: ["category", "comments"],
         });
     }
 
-    async catalogGetByIds(ids: string[]) {
+    async catalogGetByIds(ids: number[]) {
         return this.productRepository.find({
             where: { id: In(ids), isActive: true },
             order: {
@@ -198,17 +198,17 @@ export class ProductsService {
         });
     }
 
-    async update(id: string, product: Partial<Product>) {
+    async update(id: number, product: Partial<Product>) {
         await this.productRepository.update(id, product);
         return this.getById(id);
     }
 
-    async updateMany(ids: string[], product: Partial<Product>) {
+    async updateMany(ids: number[], product: Partial<Product>) {
         return this.productRepository.update(ids, product);
     }
 
     async updateWithImages(
-        id: string,
+        id: number,
         productUpdatedData: Partial<Product>,
         deletedFileNames: string[],
         uploadedFileNames: string[],
@@ -229,11 +229,11 @@ export class ProductsService {
         return this.getById(id);
     }
 
-    async deleteMany(ids: string[]) {
+    async deleteMany(ids: number[]) {
         return this.productRepository.delete(ids);
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         await this.productRepository.delete(id);
     }
 }

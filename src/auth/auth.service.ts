@@ -65,7 +65,7 @@ export class AuthService {
         return this.sessionsService.getById(session.id);
     }
 
-    async logout(sessionId: string) {
+    async logout(sessionId: number) {
         return this.sessionsService.delete(sessionId);
     }
 }

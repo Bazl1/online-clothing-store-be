@@ -17,7 +17,7 @@ export class UsersService {
         private readonly addressesService: AddressesService,
     ) {}
 
-    async deleteMany(ids: string[]) {
+    async deleteMany(ids: number[]) {
         return this.usersRepository.delete(ids);
     }
 
@@ -56,7 +56,7 @@ export class UsersService {
         return this.usersRepository.findOne({ where: { email } });
     }
 
-    async getById(id: string) {
+    async getById(id: number) {
         return this.usersRepository.findOne({
             where: { id },
             relations: ["address"],
@@ -73,13 +73,13 @@ export class UsersService {
         return this.getById(user.id);
     }
 
-    async update(id: string, data: Partial<User>) {
+    async update(id: number, data: Partial<User>) {
         await this.usersRepository.update(id, data);
         return this.getById(id);
     }
 
     async updateUserWithAddress(
-        userId: string,
+        userId: number,
         data: UpdateUserWithAddressDto,
     ) {
         const user = await this.getById(userId);
@@ -117,12 +117,12 @@ export class UsersService {
         return this.getById(user.id);
     }
 
-    async delete(id: string) {
+    async delete(id: number) {
         await this.usersRepository.delete(id);
         return;
     }
 
-    async updatePassword(id: string, data: UserResetPasswordDto) {
+    async updatePassword(id: number, data: UserResetPasswordDto) {
         if (
             !this.passwordService.comparePasswords(
                 data.password,

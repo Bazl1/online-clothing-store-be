@@ -11,8 +11,8 @@ import { Product } from "../products/product.entity";
 
 @Entity("comments")
 export class Comment {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
+    @PrimaryGeneratedColumn("increment")
+    id: number;
 
     @Column()
     comment: string;
