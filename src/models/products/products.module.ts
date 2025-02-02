@@ -8,6 +8,7 @@ import { ConfigModule } from "@nestjs/config";
 import { ProductsService } from "./products.service";
 import { ProductsController } from "./products.controller";
 import { Category } from "../categories/category.entity";
+import { ProductsClientController } from "./products.client-controller";
 
 @Module({
     imports: [
@@ -18,7 +19,7 @@ import { Category } from "../categories/category.entity";
         }),
         TypeOrmModule.forFeature([Product, Category]),
     ],
-    controllers: [ProductsController],
+    controllers: [ProductsController, ProductsClientController],
     providers: [ProductsService],
     exports: [ProductsService],
 })

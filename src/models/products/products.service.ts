@@ -35,48 +35,58 @@ export class ProductsService {
         isActive?: boolean,
         categoryIds?: string[],
     ) {
-        const where: any = {
-            isActive: true,
-        };
+        const queryBuilder =
+            this.productRepository.createQueryBuilder("product");
+
+        queryBuilder.where("product.isActive = :isActive", { isActive: true });
 
         if (search) {
-            where.title = Like(`%${search}%`);
+            queryBuilder.andWhere("product.title ILIKE :search", {
+                search: `%${search}%`,
+            });
         }
 
-        if (minPrice !== undefined && maxPrice !== undefined) {
-            where.price = Between(minPrice, maxPrice);
-        }
-        if (minPrice !== undefined) {
-            where.price = MoreThanOrEqual(minPrice);
-        }
-        if (maxPrice !== undefined) {
-            where.price = LessThanOrEqual(maxPrice);
-        }
-        if (isActive !== undefined) {
-            where.isActive = isActive;
-        }
         if (categoryIds && categoryIds.length) {
-            where.category = In(categoryIds);
+            queryBuilder.andWhere("product.categoryId IN (:...categoryIds)", {
+                categoryIds,
+            });
         }
 
-        const totalItems = await this.productRepository.count({ where });
+        if (minPrice !== undefined) {
+            queryBuilder.andWhere(
+                "(COALESCE(product.discountPrice, product.price) >= :minPrice)",
+                { minPrice },
+            );
+        }
+
+        if (maxPrice !== undefined) {
+            queryBuilder.andWhere(
+                "(COALESCE(product.discountPrice, product.price) <= :maxPrice)",
+                { maxPrice },
+            );
+        }
+
+        if (sort === "price-asc" || sort === "price-desc") {
+            queryBuilder.orderBy(
+                "COALESCE(product.discountPrice, product.price)",
+                sort === "price-asc" ? "ASC" : "DESC",
+            );
+        } else if (sort === "created-asc" || sort === "created-desc") {
+            queryBuilder.orderBy(
+                "product.createdAt",
+                sort === "created-asc" ? "ASC" : "DESC",
+            );
+        }
+
+        const totalItems = await queryBuilder.getCount();
 
         const totalPages = Math.ceil(totalItems / limit);
 
-        const items = await this.productRepository.find({
-            where,
-            order: {
-                ...((sort === "price-asc" || sort === "price-desc") && {
-                    price: sort === "price-asc" ? "ASC" : "DESC",
-                }),
-                ...((sort === "created-asc" || sort === "created-desc") && {
-                    createdAt: sort === "created-asc" ? "ASC" : "DESC",
-                }),
-            },
-            take: limit,
-            skip: (page - 1) * limit,
-            relations: ["category"],
-        });
+        const items = await queryBuilder
+            .take(limit)
+            .skip((page - 1) * limit)
+            .leftJoinAndSelect("product.category", "category")
+            .getMany();
 
         return {
             items,
@@ -105,18 +115,22 @@ export class ProductsService {
             where.title = Like(`%${search}%`);
         }
 
-        if (minPrice !== undefined && maxPrice !== undefined) {
-            where.price = Between(minPrice, maxPrice);
-        }
         if (minPrice !== undefined) {
             where.price = MoreThanOrEqual(minPrice);
         }
+
         if (maxPrice !== undefined) {
             where.price = LessThanOrEqual(maxPrice);
         }
+
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            where.price = Between(minPrice, maxPrice);
+        }
+
         if (isActive !== undefined) {
             where.isActive = isActive;
         }
+
         if (categoryIds && categoryIds.length) {
             where.category = In(categoryIds);
         }

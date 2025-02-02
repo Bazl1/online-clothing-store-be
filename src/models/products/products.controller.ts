@@ -116,19 +116,6 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
-    @Post("get")
-    @UseGuards(AdminGuard)
-    async getMany(@Body("ids") ids: string[]) {
-        await this.productsService.getByIds(ids);
-        return createApiOkMessageResponse("Products deleted successfully");
-    }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [{ $ref: getSchemaPath(ApiResponse) }],
-        },
-    })
-    @ApiBadRequestResponse()
     @Delete(":id")
     @UseGuards(AdminGuard)
     async delete(@Param("id", ParseUUIDPipe) id: string) {
@@ -263,83 +250,6 @@ export class ProductsController {
                 { $ref: getSchemaPath(ApiResponse) },
                 {
                     properties: {
-                        data: {
-                            type: "array",
-                            $ref: getSchemaPath(ProductResponseDto),
-                        },
-                    },
-                },
-            ],
-        },
-    })
-    @ApiBadRequestResponse()
-    @ApiQuery({
-        name: "search",
-        required: false,
-        type: String,
-    })
-    @ApiQuery({
-        name: "page",
-        required: false,
-        type: Number,
-    })
-    @ApiQuery({
-        name: "limit",
-        required: false,
-        type: Number,
-    })
-    @ApiQuery({
-        name: "sort",
-        required: false,
-        enum: ["price-asc", "price-desc", "created-desc", "created-asc"],
-    })
-    @ApiQuery({
-        name: "maxPrice",
-        required: false,
-        type: Number,
-    })
-    @ApiQuery({
-        name: "minPrice",
-        required: false,
-        type: Number,
-    })
-    @Post("catalog")
-    @Serialize(ProductResponseDto)
-    async getAllFromCatalog(
-        @Query("search") search: string,
-        @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
-        @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("sort")
-        sort:
-            | "price-asc"
-            | "price-desc"
-            | "created-desc"
-            | "created-asc" = "created-desc",
-        @Query("maxPrice") maxPrice?: number,
-        @Query("minPrice") minPrice?: number,
-        @Body("categoryIds") categoryIds?: string[],
-    ) {
-        const { items, totalItems, totalPages } =
-            await this.productsService.catalogGetAll(
-                search,
-                page,
-                limit,
-                maxPrice,
-                minPrice,
-                sort,
-                true,
-                categoryIds,
-            );
-
-        return createApiOkResponse(items, page, totalItems, totalPages);
-    }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
                         data: { $ref: getSchemaPath(ProductResponseDto) },
                     },
                 },
@@ -362,66 +272,5 @@ export class ProductsController {
         }
 
         return createApiOkSingleResponse(product);
-    }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
-                        data: { $ref: getSchemaPath(ProductResponseDto) },
-                    },
-                },
-            ],
-        },
-    })
-    @ApiBadRequestResponse()
-    @ApiParam({
-        name: "id",
-        type: "string",
-        format: "uuid",
-    })
-    @Get("catalog/:id")
-    @Serialize(ProductResponseDto)
-    async catalogGetById(@Param("id", ParseUUIDPipe) id: string) {
-        return createApiOkSingleResponse(
-            await this.productsService.catalogGetById(id),
-        );
-    }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
-                        data: { $ref: getSchemaPath(ProductResponseDto) },
-                    },
-                },
-            ],
-        },
-    })
-    @ApiBadRequestResponse()
-    @ApiBody({
-        schema: {
-            type: "object",
-            properties: {
-                productIds: {
-                    type: "array",
-                    items: {
-                        type: "string",
-                        format: "uuid",
-                    },
-                },
-            },
-        },
-    })
-    @Post("catalog/ids")
-    @Serialize(ProductResponseDto)
-    async catalogGetByIds(@Body("productIds") ids: string[]) {
-        return createApiOkSingleResponse(
-            await this.productsService.catalogGetByIds(ids),
-        );
     }
 }

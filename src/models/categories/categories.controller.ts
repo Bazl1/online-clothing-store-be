@@ -263,29 +263,4 @@ export class CategoriesController {
         await this.categoriesService.delete(categoryId);
         return createApiOkMessageResponse("Category deleted successfully");
     }
-
-    @ApiOkResponse({
-        schema: {
-            allOf: [
-                { $ref: getSchemaPath(ApiResponse) },
-                {
-                    properties: {
-                        data: {
-                            $ref: getSchemaPath(CategoryCatalogResourceDto),
-                        },
-                    },
-                },
-            ],
-        },
-    })
-    @ApiBadRequestResponse()
-    @Get("catalog")
-    @Serialize(CategoryCatalogResourceDto)
-    async getCatalog(
-        @Query("limit", new DefaultValuePipe(0), ParseIntPipe) limit?: number,
-    ) {
-        return createApiOkResponse(
-            await this.categoriesService.getCatalog(limit),
-        );
-    }
 }

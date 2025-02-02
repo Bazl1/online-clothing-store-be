@@ -7,6 +7,7 @@ import { MulterModule } from "@nestjs/platform-express";
 import { MulterConfigService } from "@/config/multer/config.service";
 import { MulterConfigModule } from "@/config/multer/config.module";
 import { ConfigModule } from "@nestjs/config";
+import { CategoriesClientController } from "./categories.client-controller";
 
 @Module({
     imports: [
@@ -17,7 +18,7 @@ import { ConfigModule } from "@nestjs/config";
         }),
         TypeOrmModule.forFeature([Category]),
     ],
-    controllers: [CategoriesController],
+    controllers: [CategoriesController, CategoriesClientController],
     providers: [CategoriesService],
     exports: [CategoriesService],
 })
