@@ -30,6 +30,7 @@ import {
 } from "@/common/interfaces/responses/api-response";
 import {
     ApiBadRequestResponse,
+    ApiBody,
     ApiConsumes,
     ApiExtraModels,
     ApiOkResponse,
@@ -354,7 +355,7 @@ export class ProductsController {
     @Get(":id")
     @Serialize(ProductResponseDto)
     async getById(@Param("id", ParseUUIDPipe) id: string) {
-        const product = await this.productsService.catalogGetById(id);
+        const product = await this.productsService.getById(id);
 
         if (!product) {
             throw new BadRequestException("Product does not exist");
@@ -385,7 +386,7 @@ export class ProductsController {
     @Serialize(ProductResponseDto)
     async catalogGetById(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(
-            await this.productsService.getById(id),
+            await this.productsService.catalogGetById(id),
         );
     }
 
@@ -402,12 +403,21 @@ export class ProductsController {
         },
     })
     @ApiBadRequestResponse()
-    @ApiParam({
-        name: "id",
-        type: "string",
-        format: "uuid",
+    @ApiBody({
+        schema: {
+            type: "object",
+            properties: {
+                productIds: {
+                    type: "array",
+                    items: {
+                        type: "string",
+                        format: "uuid",
+                    },
+                },
+            },
+        },
     })
-    @Post("catalog")
+    @Post("catalog/ids")
     @Serialize(ProductResponseDto)
     async catalogGetByIds(@Body("productIds") ids: string[]) {
         return createApiOkSingleResponse(
