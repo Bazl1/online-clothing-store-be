@@ -32,7 +32,6 @@ export class ProductsService {
             | "price-desc"
             | "created-desc"
             | "created-asc" = "created-asc",
-        isActive?: boolean,
         categoryIds?: string[],
     ) {
         const queryBuilder =
@@ -52,23 +51,28 @@ export class ProductsService {
             });
         }
 
+        queryBuilder.addSelect(
+            "COALESCE(product.discountPrice, product.price)",
+            "effectivePrice",
+        );
+
         if (minPrice !== undefined) {
             queryBuilder.andWhere(
-                "(COALESCE(product.discountPrice, product.price) >= :minPrice)",
+                "COALESCE(product.discountPrice, product.price) >= :minPrice",
                 { minPrice },
             );
         }
 
         if (maxPrice !== undefined) {
             queryBuilder.andWhere(
-                "(COALESCE(product.discountPrice, product.price) <= :maxPrice)",
+                "COALESCE(product.discountPrice, product.price) <= :maxPrice",
                 { maxPrice },
             );
         }
 
         if (sort === "price-asc" || sort === "price-desc") {
             queryBuilder.orderBy(
-                "COALESCE(product.discountPrice, product.price)",
+                "effectivePrice",
                 sort === "price-asc" ? "ASC" : "DESC",
             );
         } else if (sort === "created-asc" || sort === "created-desc") {

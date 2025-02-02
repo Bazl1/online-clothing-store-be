@@ -30,7 +30,6 @@ import {
 } from "@/common/interfaces/responses/api-response";
 import {
     ApiBadRequestResponse,
-    ApiBody,
     ApiConsumes,
     ApiExtraModels,
     ApiOkResponse,
