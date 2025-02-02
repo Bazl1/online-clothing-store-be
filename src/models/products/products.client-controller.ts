@@ -118,7 +118,6 @@ export class ProductsClientController {
                 maxPrice,
                 minPrice,
                 sort,
-                true,
                 categoryIds,
             );
 
