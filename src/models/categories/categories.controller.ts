@@ -44,7 +44,7 @@ import { CategoryListResourceDto } from "./dtos/category-list-response.dto";
 import { CategoryCatalogResourceDto } from "./dtos/category-catalog-response.dto";
 
 @ApiTags("Categories")
-@ApiExtraModels(ApiResponse, CategoryResponseDto)
+@ApiExtraModels(ApiResponse, CategoryResponseDto, CategoryCatalogResourceDto)
 @Controller("categories")
 export class CategoriesController {
     constructor(private readonly categoriesService: CategoriesService) {}

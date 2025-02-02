@@ -24,6 +24,7 @@ import { Session as SessionType } from "../sessions/session.entity";
 import { Session } from "@/common/decorators/request/session.decorator";
 import {
     ApiBadRequestResponse,
+    ApiExtraModels,
     ApiOkResponse,
     ApiQuery,
     ApiTags,
@@ -36,6 +37,7 @@ import { Comment } from "./comment.entity";
 import { Product } from "../products/product.entity";
 
 @ApiTags("Product Comments")
+@ApiExtraModels(CommentResponseDto, ApiResponse)
 @Controller("comments")
 @UseGuards(SessionGuard)
 export class CommentsController {

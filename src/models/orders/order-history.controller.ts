@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import {
     ApiBadRequestResponse,
+    ApiExtraModels,
     ApiOkResponse,
     ApiTags,
     getSchemaPath,
@@ -22,6 +23,7 @@ import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { OrderResponseDto } from "./dtos/order-response.dto";
 
 @ApiTags("Order history")
+@ApiExtraModels(OrderResponseDto, ApiResponse)
 @Controller("order-history")
 export class OrderHistoryController {
     constructor(private readonly ordersService: OrdersService) {}

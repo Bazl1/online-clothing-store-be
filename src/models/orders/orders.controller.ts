@@ -19,6 +19,7 @@ import {
 } from "@nestjs/common";
 import {
     ApiBadRequestResponse,
+    ApiExtraModels,
     ApiOkResponse,
     ApiParam,
     ApiTags,
@@ -35,6 +36,7 @@ import { Session as SessionEntity } from "@/models/sessions/session.entity";
 import { User } from "../users/entities/user.entity";
 
 @ApiTags("Orders")
+@ApiExtraModels(OrderResponseDto, ApiResponse)
 @Controller("orders")
 export class OrdersController {
     constructor(private readonly ordersService: OrdersService) {}
