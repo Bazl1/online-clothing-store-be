@@ -34,8 +34,9 @@ export class ProductsService {
             | "created-asc" = "created-asc",
         categoryIds?: string[],
     ) {
-        const queryBuilder =
-            this.productRepository.createQueryBuilder("product");
+        const queryBuilder = this.productRepository
+            .createQueryBuilder("product")
+            .leftJoinAndSelect("product.category", "category"); // Правильный join
 
         queryBuilder.where("product.isActive = :isActive", { isActive: true });
 
@@ -51,28 +52,27 @@ export class ProductsService {
             });
         }
 
-        queryBuilder.addSelect(
-            "COALESCE(product.discountPrice, product.price)",
-            "effectivePrice",
-        );
-
         if (minPrice !== undefined) {
             queryBuilder.andWhere(
-                "COALESCE(product.discountPrice, product.price) >= :minPrice",
+                "(COALESCE(product.discountPrice, product.price) >= :minPrice)",
                 { minPrice },
             );
         }
 
         if (maxPrice !== undefined) {
             queryBuilder.andWhere(
-                "COALESCE(product.discountPrice, product.price) <= :maxPrice",
+                "(COALESCE(product.discountPrice, product.price) <= :maxPrice)",
                 { maxPrice },
             );
         }
 
+        queryBuilder.andWhere("category.isActive = :isActive", {
+            isActive: true,
+        });
+
         if (sort === "price-asc" || sort === "price-desc") {
             queryBuilder.orderBy(
-                "effectivePrice",
+                "product.price",
                 sort === "price-asc" ? "ASC" : "DESC",
             );
         } else if (sort === "created-asc" || sort === "created-desc") {
@@ -89,7 +89,6 @@ export class ProductsService {
         const items = await queryBuilder
             .take(limit)
             .skip((page - 1) * limit)
-            .leftJoinAndSelect("product.category", "category")
             .getMany();
 
         return {
