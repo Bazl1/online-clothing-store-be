@@ -85,6 +85,68 @@ export class ProductsService {
         };
     }
 
+    async getAll(
+        search: string,
+        page: number,
+        limit: number,
+        maxPrice?: number,
+        minPrice?: number,
+        sort:
+            | "price-asc"
+            | "price-desc"
+            | "created-desc"
+            | "created-asc" = "created-asc",
+        isActive?: boolean,
+        categoryIds?: string[],
+    ) {
+        const where: any = {};
+
+        if (search) {
+            where.title = Like(`%${search}%`);
+        }
+
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            where.price = Between(minPrice, maxPrice);
+        }
+        if (minPrice !== undefined) {
+            where.price = MoreThanOrEqual(minPrice);
+        }
+        if (maxPrice !== undefined) {
+            where.price = LessThanOrEqual(maxPrice);
+        }
+        if (isActive !== undefined) {
+            where.isActive = isActive;
+        }
+        if (categoryIds && categoryIds.length) {
+            where.category = In(categoryIds);
+        }
+
+        const totalItems = await this.productRepository.count({ where });
+
+        const totalPages = Math.ceil(totalItems / limit);
+
+        const items = await this.productRepository.find({
+            where,
+            order: {
+                ...((sort === "price-asc" || sort === "price-desc") && {
+                    price: sort === "price-asc" ? "ASC" : "DESC",
+                }),
+                ...((sort === "created-asc" || sort === "created-desc") && {
+                    createdAt: sort === "created-asc" ? "ASC" : "DESC",
+                }),
+            },
+            take: limit,
+            skip: (page - 1) * limit,
+            relations: ["category"],
+        });
+
+        return {
+            items,
+            totalItems,
+            totalPages,
+        };
+    }
+
     async getById(id: string) {
         return this.productRepository.findOne({
             where: { id },

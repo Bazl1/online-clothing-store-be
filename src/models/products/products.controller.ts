@@ -251,7 +251,7 @@ export class ProductsController {
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
     ) {
         const { items, totalItems, totalPages } =
-            await this.productsService.catalogGetAll(search, page, limit);
+            await this.productsService.getAll(search, page, limit);
 
         return createApiOkResponse(items, page, totalItems, totalPages);
     }
