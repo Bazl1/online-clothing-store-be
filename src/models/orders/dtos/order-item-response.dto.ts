@@ -7,7 +7,7 @@ export class OrderItemResponseDto {
     @Expose()
     id: string;
 
-    @ApiProperty()
+    @ApiProperty({ type: ProductResponseDto })
     @Expose()
     @Type(() => ProductResponseDto)
     product: ProductResponseDto;

@@ -32,7 +32,7 @@ export class ProductResponseDto {
     isActive: boolean;
 
     @Expose()
-    @ApiProperty()
+    @ApiProperty({ type: CategoryResponseDto })
     @Type(() => CategoryResponseDto)
     category: CategoryResponseDto;
 

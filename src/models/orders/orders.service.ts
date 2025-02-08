@@ -16,8 +16,6 @@ export class OrdersService {
         private readonly orderRepository: Repository<Order>,
         @InjectRepository(OrderItem)
         private readonly orderItemRepository: Repository<OrderItem>,
-        @InjectRepository(Product)
-        private readonly productRepository: Repository<Product>,
     ) {}
 
     async get(page: number, limit: number, orderId?: string) {
@@ -36,7 +34,12 @@ export class OrdersService {
             },
             take: limit,
             skip: (page - 1) * limit,
-            relations: ["user", "items"],
+            relations: [
+                "user",
+                "items",
+                "items.product",
+                "items.product.category",
+            ],
         });
 
         return {
@@ -64,7 +67,12 @@ export class OrdersService {
             },
             take: limit,
             skip: (page - 1) * limit,
-            relations: ["user", "items"],
+            relations: [
+                "user",
+                "items",
+                "items.product",
+                "items.product.category",
+            ],
         });
 
         return {
@@ -80,7 +88,12 @@ export class OrdersService {
                 status: OrderStatus.Completed || OrderStatus.Cancelled,
                 id,
             },
-            relations: ["user", "items"],
+            relations: [
+                "user",
+                "items",
+                "items.product",
+                "items.product.category",
+            ],
         });
     }
 
@@ -89,7 +102,12 @@ export class OrdersService {
             where: {
                 id,
             },
-            relations: ["user", "items"],
+            relations: [
+                "user",
+                "items",
+                "items.product",
+                "items.product.category",
+            ],
         });
     }
 

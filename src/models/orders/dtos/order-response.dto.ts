@@ -11,7 +11,7 @@ export class OrderResponseDto {
     @Expose()
     price: number;
 
-    @ApiProperty()
+    @ApiProperty({ type: OrderItemResponseDto })
     @Expose()
     @Type(() => OrderItemResponseDto)
     items: OrderItemResponseDto[];
