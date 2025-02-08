@@ -3,7 +3,7 @@ import { OrderItemCreateDto } from "./order-item-create.dto";
 
 export class OrderCreateDto {
     @ApiProperty()
-    userId: number;
+    userId: string;
 
     @ApiProperty()
     country: string;

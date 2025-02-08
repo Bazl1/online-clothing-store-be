@@ -19,8 +19,8 @@ export enum UserRole {
 
 @Entity("users")
 export class User {
-    @PrimaryGeneratedColumn("increment")
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column({
         name: "first_name",

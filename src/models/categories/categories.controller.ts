@@ -147,7 +147,7 @@ export class CategoriesController {
     @Get(":id")
     @UseGuards(SessionGuard)
     @Serialize(CategoryResponseDto)
-    async getById(@Param("id") id: number) {
+    async getById(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(
             await this.categoriesService.getById(id),
         );
@@ -212,7 +212,7 @@ export class CategoriesController {
     @UseInterceptors(FileInterceptor("icon"))
     @UseGuards(AdminGuard)
     async update(
-        @Param("id") categoryId: number,
+        @Param("id", ParseUUIDPipe) categoryId: string,
         @Body() dto: CategoryUpdateDto,
         @UploadedFile() icon?: Express.Multer.File,
     ) {
@@ -259,7 +259,7 @@ export class CategoriesController {
     @Delete(":id")
     @Serialize(CategoryResponseDto)
     @UseGuards(AdminGuard)
-    async delete(@Param("id") categoryId: number) {
+    async delete(@Param("id", ParseUUIDPipe) categoryId: string) {
         await this.categoriesService.delete(categoryId);
         return createApiOkMessageResponse("Category deleted successfully");
     }

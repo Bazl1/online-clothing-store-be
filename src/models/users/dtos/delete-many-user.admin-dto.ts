@@ -5,10 +5,14 @@ export class DeleteManyUserAdminDto {
     @ApiProperty({
         isArray: true,
         items: {
-            type: "number",
+            type: "string",
+            format: "uuid",
         },
+        description: "Array of user ids",
+        example: ["5f4f6f5e6c0e6c001f2e4a3d", "5f4f6f5e6c0e6c001f2e4a3e"],
     })
     @IsArray()
     @ArrayUnique()
-    ids: number[];
+    @IsString({ each: true })
+    ids: string[];
 }

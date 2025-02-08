@@ -9,8 +9,8 @@ import {
 
 @Entity("sessions")
 export class Session {
-    @PrimaryGeneratedColumn("increment")
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @ManyToOne(() => User)
     @JoinColumn()

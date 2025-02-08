@@ -83,7 +83,7 @@ export class CommentsController {
     })
     @ApiBadRequestResponse()
     @Post("delete")
-    async deleteMany(@Body("ids") ids: number[]) {
+    async deleteMany(@Body("ids") ids: string[]) {
         await this.commentsService.deleteMany(ids);
         return createApiOkMessageResponse(
             "Product comments deleted successfully",
@@ -97,7 +97,7 @@ export class CommentsController {
     })
     @ApiBadRequestResponse()
     @Delete(":id")
-    async delete(@Param("id") id: number) {
+    async delete(@Param("id") id: string) {
         await this.commentsService.delete(id);
         return createApiOkMessageResponse(
             "Product comment deleted successfully",
@@ -121,7 +121,7 @@ export class CommentsController {
     @ApiBadRequestResponse()
     @Patch(":id")
     @Serialize(CommentResponseDto)
-    async update(@Param("id") id: number, @Body() dto: CommentCreateDto) {
+    async update(@Param("id") id: string, @Body() dto: CommentCreateDto) {
         return createApiOkSingleResponse(
             await this.commentsService.update(id, dto),
             "Product comment updated successfully",
@@ -149,7 +149,7 @@ export class CommentsController {
     @Get()
     @Serialize(CommentResponseDto)
     async findAll(
-        @Query("productId", ParseUUIDPipe) productId: number,
+        @Query("productId", ParseUUIDPipe) productId: string,
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
     ) {
@@ -182,7 +182,7 @@ export class CommentsController {
     @ApiBadRequestResponse()
     @Get(":id")
     @Serialize(CommentResponseDto)
-    async findOne(@Param("id") id: number) {
+    async findOne(@Param("id", ParseUUIDPipe) id: string) {
         return createApiOkSingleResponse(
             await this.commentsService.getById(id),
             "Product comment retrieved successfully",

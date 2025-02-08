@@ -104,7 +104,7 @@ export class ProductsController {
     @ApiBadRequestResponse()
     @Post("delete")
     @UseGuards(AdminGuard)
-    async deleteMany(@Body("ids") ids: number[]) {
+    async deleteMany(@Body("ids") ids: string[]) {
         await this.productsService.deleteMany(ids);
         return createApiOkMessageResponse("Products deleted successfully");
     }
@@ -117,7 +117,7 @@ export class ProductsController {
     @ApiBadRequestResponse()
     @Delete(":id")
     @UseGuards(AdminGuard)
-    async delete(@Param("id") id: number) {
+    async delete(@Param("id", ParseUUIDPipe) id: string) {
         await this.productsService.delete(id);
         return createApiOkMessageResponse("Product deleted successfully");
     }
@@ -131,7 +131,7 @@ export class ProductsController {
     @Patch("actions/toggle-enabled")
     @UseGuards(AdminGuard)
     async activate(
-        @Body("ids") ids: number[],
+        @Body("ids") ids: string[],
         @Body("isActive") isActive: boolean,
     ) {
         await this.productsService.updateMany(ids, {
@@ -161,7 +161,7 @@ export class ProductsController {
     @UseInterceptors(FilesInterceptor("uploadedFiles"))
     @Serialize(ProductResponseDto)
     async update(
-        @Param("id") id: number,
+        @Param("id", ParseUUIDPipe) id: string,
         @Body() dto: ProductUpdateDto,
         @UploadedFiles() uploadedFiles: Express.Multer.File[],
     ) {
@@ -263,7 +263,7 @@ export class ProductsController {
     })
     @Get(":id")
     @Serialize(ProductResponseDto)
-    async getById(@Param("id") id: number) {
+    async getById(@Param("id", ParseUUIDPipe) id: string) {
         const product = await this.productsService.getById(id);
 
         if (!product) {

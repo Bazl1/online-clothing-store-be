@@ -4,10 +4,10 @@ export class OrderItemUpdateDto {
     @ApiProperty({
         required: false,
     })
-    id?: number;
+    id?: string;
 
     @ApiProperty()
-    productId: number;
+    productId: string;
 
     @ApiProperty()
     quantity: number;

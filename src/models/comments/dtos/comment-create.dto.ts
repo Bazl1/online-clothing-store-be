@@ -1,8 +1,9 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
 export class CommentCreateDto {
+    @IsString()
     @IsNotEmpty()
-    productId: number;
+    productId: string;
 
     @IsString()
     @IsNotEmpty()
