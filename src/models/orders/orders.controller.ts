@@ -19,9 +19,11 @@ import {
 } from "@nestjs/common";
 import {
     ApiBadRequestResponse,
+    ApiBody,
     ApiExtraModels,
     ApiOkResponse,
     ApiParam,
+    ApiQuery,
     ApiTags,
     getSchemaPath,
 } from "@nestjs/swagger";
@@ -30,10 +32,6 @@ import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { OrderUpdateDto } from "./dtos/order-update.dto";
 import { OrderCreateDto } from "./dtos/order-create.dto";
 import { OrdersService } from "./orders.service";
-import { SessionGuard } from "@/common/guards/session.guard";
-import { Session } from "@/common/decorators/request/session.decorator";
-import { Session as SessionEntity } from "@/models/sessions/session.entity";
-import { User } from "../users/entities/user.entity";
 
 @ApiTags("Orders")
 @ApiExtraModels(OrderResponseDto, ApiResponse)
@@ -54,17 +52,29 @@ export class OrdersController {
         },
     })
     @ApiBadRequestResponse()
+    @ApiQuery({
+        name: "page",
+        type: "number",
+        required: false,
+        description: "Page number",
+    })
+    @ApiQuery({
+        name: "limit",
+        type: "number",
+        required: false,
+        description: "Items per page",
+    })
     @Get()
     @Serialize(OrderResponseDto)
     async get(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("orderId") orderId?: string,
+        @Body("orderIds") orderIds?: string[],
     ) {
         const { totalItems, totalPages, items } = await this.ordersService.get(
             page,
             limit,
-            orderId,
+            orderIds,
         );
 
         return createApiOkResponse(items, page, totalPages, totalItems);

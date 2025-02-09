@@ -11,7 +11,7 @@ export class OrderResponseDto {
     @Expose()
     price: number;
 
-    @ApiProperty({ type: OrderItemResponseDto })
+    @ApiProperty({ type: OrderItemResponseDto, isArray: true })
     @Expose()
     @Type(() => OrderItemResponseDto)
     items: OrderItemResponseDto[];
@@ -47,6 +47,10 @@ export class OrderResponseDto {
     @ApiProperty()
     @Expose()
     zip: string;
+
+    @ApiProperty()
+    @Expose()
+    totalPrice: number;
 
     @ApiProperty()
     @Expose()

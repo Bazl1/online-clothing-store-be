@@ -4,6 +4,7 @@ import {
     CreateDateColumn,
     Entity,
     JoinColumn,
+    ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
@@ -16,19 +17,18 @@ export class OrderItem {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @OneToOne(() => Product)
-    @JoinColumn()
+    @ManyToOne(() => Product, { nullable: false })
+    @JoinColumn({ name: "productId" })
     product: Product;
 
-    @OneToMany(() => Order, (order) => order.items)
-    @JoinColumn()
-    order: Order;
+    @Column({ type: "int" })
+    quantity: number;
 
-    @Column()
+    @Column({ type: "decimal" })
     price: number;
 
-    @Column()
-    quantity: number;
+    @ManyToOne(() => Order, (order) => order.items, { nullable: false })
+    order: Order;
 
     @CreateDateColumn({
         name: "created_at",

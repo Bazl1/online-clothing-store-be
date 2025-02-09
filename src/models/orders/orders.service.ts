@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Order } from "./entities/order.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { OrderStatus } from "./entities/order-status";
 import { OrderCreateDto } from "./dtos/order-create.dto";
 import { OrderItem } from "./entities/order-item.entity";
@@ -19,15 +19,15 @@ export class OrdersService {
         private readonly productRepository: Repository<Product>,
     ) {}
 
-    async get(page: number, limit: number, orderId?: string) {
+    async get(page: number, limit: number, orderIds?: string[]) {
         const totalItems = await this.orderRepository.count();
 
         const totalPages = Math.ceil(totalItems / limit);
 
         const items = await this.orderRepository.find({
-            ...(orderId && {
+            ...(orderIds && {
                 where: {
-                    id: orderId,
+                    id: In(orderIds),
                 },
             }),
             order: {
@@ -97,29 +97,26 @@ export class OrdersService {
         const items = await Promise.all(
             dto.items.map(async (item) => {
                 const product = await this.productRepository.findOne({
-                    where: {
-                        id: item.productId,
-                    },
+                    where: { id: item.productId },
                 });
 
-                let orderItem = new OrderItem({
-                    product,
-                    quantity: item.quantity,
-                    price: product.price,
-                });
+                if (!product) {
+                    throw new Error(
+                        `Product with ID ${item.productId} not found`,
+                    );
+                }
 
-                orderItem = await this.orderItemRepository.save(orderItem);
-
-                return this.orderItemRepository.findOne({
-                    where: {
-                        id: orderItem.id,
-                    },
-                    relations: ["product", "product.category"],
-                });
+                return this.orderItemRepository.save(
+                    this.orderItemRepository.create({
+                        product,
+                        quantity: item.quantity ?? 1,
+                        price: product.price,
+                    }),
+                );
             }),
         );
 
-        const order = new Order({
+        const order = this.orderRepository.create({
             ...dto,
             items,
             status: OrderStatus.Pending,
