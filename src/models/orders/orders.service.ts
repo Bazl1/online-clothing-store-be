@@ -15,6 +15,8 @@ export class OrdersService {
         private readonly orderRepository: Repository<Order>,
         @InjectRepository(OrderItem)
         private readonly orderItemRepository: Repository<OrderItem>,
+        @InjectRepository(Product)
+        private readonly productRepository: Repository<Product>,
     ) {}
 
     async get(page: number, limit: number, orderId?: string) {
@@ -33,12 +35,7 @@ export class OrdersService {
             },
             take: limit,
             skip: (page - 1) * limit,
-            relations: [
-                "user",
-                "items",
-                "items.product",
-                "items.product.category",
-            ],
+            relations: ["items", "items.product", "items.product.category"],
         });
 
         return {
@@ -67,12 +64,7 @@ export class OrdersService {
             },
             take: limit,
             skip: (page - 1) * limit,
-            relations: [
-                "user",
-                "items",
-                "items.product",
-                "items.product.category",
-            ],
+            relations: ["items", "items.product", "items.product.category"],
         });
 
         return {
@@ -88,12 +80,7 @@ export class OrdersService {
                 status: OrderStatus.Completed || OrderStatus.Cancelled,
                 id,
             },
-            relations: [
-                "user",
-                "items",
-                "items.product",
-                "items.product.category",
-            ],
+            relations: ["items", "items.product", "items.product.category"],
         });
     }
 
@@ -102,26 +89,34 @@ export class OrdersService {
             where: {
                 id,
             },
-            relations: [
-                "user",
-                "items",
-                "items.product",
-                "items.product.category",
-            ],
+            relations: ["items", "items.product", "items.product.category"],
         });
     }
 
     async create(dto: OrderCreateDto) {
         const items = await Promise.all(
-            dto.items.map(
-                async (item) =>
-                    new OrderItem({
-                        product: new Product({
-                            id: item.productId,
-                        }),
-                        quantity: item.quantity,
-                    }),
-            ),
+            dto.items.map(async (item) => {
+                const product = await this.productRepository.findOne({
+                    where: {
+                        id: item.productId,
+                    },
+                });
+
+                let orderItem = new OrderItem({
+                    product,
+                    quantity: item.quantity,
+                    price: product.price,
+                });
+
+                orderItem = await this.orderItemRepository.save(orderItem);
+
+                return this.orderItemRepository.findOne({
+                    where: {
+                        id: orderItem.id,
+                    },
+                    relations: ["product", "product.category"],
+                });
+            }),
         );
 
         const order = new Order({
