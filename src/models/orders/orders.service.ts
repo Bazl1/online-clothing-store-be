@@ -111,7 +111,7 @@ export class OrdersService {
         });
     }
 
-    async create(user: User, dto: OrderCreateDto) {
+    async create(user: User | undefined, dto: OrderCreateDto) {
         const items = await Promise.all(
             dto.items.map(
                 async (item) =>

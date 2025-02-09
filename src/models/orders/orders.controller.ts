@@ -139,11 +139,11 @@ export class OrdersController {
     @UseGuards(SessionGuard)
     @Serialize(OrderResponseDto)
     async createCreate(
-        @Session() session: SessionEntity,
+        @Session() session: SessionEntity | undefined,
         @Body() dto: OrderCreateDto,
     ) {
         return createApiOkSingleResponse(
-            await this.ordersService.create(session.user, dto),
+            await this.ordersService.create(session?.user, dto),
         );
     }
 

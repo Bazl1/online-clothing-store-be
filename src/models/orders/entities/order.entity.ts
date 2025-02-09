@@ -23,7 +23,7 @@ export class Order {
 
     @OneToMany(() => User, (user) => user.orders)
     @JoinColumn()
-    user: User;
+    user?: User;
 
     @Column({
         type: "enum",
