@@ -94,6 +94,13 @@ export class OrdersService {
     }
 
     async create(dto: OrderCreateDto) {
+        const order = this.orderRepository.create({
+            ...dto,
+            status: OrderStatus.Pending,
+        });
+
+        await this.orderRepository.save(order);
+
         const items = await Promise.all(
             dto.items.map(async (item) => {
                 const product = await this.productRepository.findOne({
@@ -108,6 +115,7 @@ export class OrdersService {
 
                 return this.orderItemRepository.save(
                     this.orderItemRepository.create({
+                        order,
                         product,
                         quantity: item.quantity ?? 1,
                         price: product.price,
@@ -116,15 +124,11 @@ export class OrdersService {
             }),
         );
 
-        const order = this.orderRepository.create({
-            ...dto,
-            items,
-            status: OrderStatus.Pending,
-            totalPrice: items.reduce(
-                (acc, item) => acc + item.price * item.quantity,
-                0,
-            ),
-        });
+        order.items = items;
+        order.totalPrice = items.reduce(
+            (acc, item) => acc + item.price * item.quantity,
+            0,
+        );
 
         return this.orderRepository.save(order);
     }
