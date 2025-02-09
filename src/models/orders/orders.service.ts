@@ -96,6 +96,7 @@ export class OrdersService {
     async create(dto: OrderCreateDto) {
         const order = this.orderRepository.create({
             ...dto,
+            totalPrice: 0,
             status: OrderStatus.Pending,
         });
 

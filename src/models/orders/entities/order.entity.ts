@@ -55,17 +55,17 @@ export class Order {
     @Column()
     street: string;
 
-    @Column()
-    house: string;
+    @Column({})
+    house?: string;
 
     @Column()
-    flat: string;
+    flat?: string;
 
     @Column()
-    floor: string;
+    floor?: string;
 
     @Column()
-    zip: string;
+    zip?: string;
 
     @CreateDateColumn({
         name: "created_at",
