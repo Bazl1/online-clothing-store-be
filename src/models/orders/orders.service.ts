@@ -4,7 +4,6 @@ import { Order } from "./entities/order.entity";
 import { Repository } from "typeorm";
 import { OrderStatus } from "./entities/order-status";
 import { OrderCreateDto } from "./dtos/order-create.dto";
-import { User } from "../users/entities/user.entity";
 import { OrderItem } from "./entities/order-item.entity";
 import { Product } from "../products/product.entity";
 import { OrderUpdateDto } from "./dtos/order-update.dto";
@@ -49,10 +48,11 @@ export class OrdersService {
         };
     }
 
-    async historyGetAll(page: number, limit: number) {
+    async historyGetAll(email: string, page: number, limit: number) {
         const totalItems = await this.orderRepository.count({
             where: {
                 status: OrderStatus.Completed || OrderStatus.Cancelled,
+                email,
             },
         });
 
@@ -111,7 +111,7 @@ export class OrdersService {
         });
     }
 
-    async create(user: User | undefined, dto: OrderCreateDto) {
+    async create(dto: OrderCreateDto) {
         const items = await Promise.all(
             dto.items.map(
                 async (item) =>
@@ -126,7 +126,6 @@ export class OrdersService {
 
         const order = new Order({
             ...dto,
-            user,
             items,
             status: OrderStatus.Pending,
             totalPrice: items.reduce(

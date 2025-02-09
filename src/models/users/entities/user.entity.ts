@@ -67,10 +67,6 @@ export class User {
     })
     updatedAt: Date;
 
-    @ManyToOne(() => Order, (order) => order.user)
-    @JoinTable()
-    orders: Order[];
-
     constructor(partial: Partial<User>) {
         Object.assign(this, partial);
     }

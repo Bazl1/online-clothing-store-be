@@ -21,16 +21,24 @@ export class Order {
     @JoinColumn()
     items: OrderItem[];
 
-    @OneToMany(() => User, (user) => user.orders)
-    @JoinColumn()
-    user?: User;
-
     @Column({
         type: "enum",
         enum: OrderStatus,
         default: OrderStatus.Pending,
     })
     status: OrderStatus;
+
+    @Column()
+    email: string;
+
+    @Column()
+    phoneNumber: string;
+
+    @Column()
+    firstName: string;
+
+    @Column()
+    lastName: string;
 
     @Column()
     totalPrice: number;

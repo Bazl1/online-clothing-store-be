@@ -111,15 +111,7 @@ export class OrdersController {
     @Post()
     @Serialize(OrderResponseDto)
     async create(@Body() dto: OrderCreateDto) {
-        const user = new User({
-            id: dto.userId,
-        });
-
-        delete dto.userId;
-
-        return createApiOkSingleResponse(
-            await this.ordersService.create(user, dto),
-        );
+        return createApiOkSingleResponse(await this.ordersService.create(dto));
     }
 
     @ApiOkResponse({
@@ -136,15 +128,9 @@ export class OrdersController {
     })
     @ApiBadRequestResponse()
     @Post("client")
-    @UseGuards(SessionGuard)
     @Serialize(OrderResponseDto)
-    async createCreate(
-        @Session() session: SessionEntity | undefined,
-        @Body() dto: OrderCreateDto,
-    ) {
-        return createApiOkSingleResponse(
-            await this.ordersService.create(session?.user, dto),
-        );
+    async createCreate(@Body() dto: OrderCreateDto) {
+        return createApiOkSingleResponse(await this.ordersService.create(dto));
     }
 
     @ApiOkResponse({

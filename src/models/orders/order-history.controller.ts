@@ -10,6 +10,7 @@ import {
     Param,
     ParseIntPipe,
     Query,
+    UseGuards,
 } from "@nestjs/common";
 import {
     ApiBadRequestResponse,
@@ -21,6 +22,9 @@ import {
 import { OrdersService } from "./orders.service";
 import { Serialize } from "@/common/decorators/response/serialize.decorator";
 import { OrderResponseDto } from "./dtos/order-response.dto";
+import { SessionGuard } from "@/common/guards/session.guard";
+import { Session } from "@/common/decorators/request/session.decorator";
+import { Session as SessionEntity } from "@/models/sessions/session.entity";
 
 @ApiTags("Order history")
 @ApiExtraModels(OrderResponseDto, ApiResponse)
@@ -42,13 +46,19 @@ export class OrderHistoryController {
     })
     @ApiBadRequestResponse()
     @Get()
+    @UseGuards(SessionGuard)
     @Serialize(OrderResponseDto)
     async get(
+        @Session() session: SessionEntity,
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page?: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit?: number,
     ) {
         const { totalItems, totalPages, items } =
-            await this.ordersService.historyGetAll(page, limit);
+            await this.ordersService.historyGetAll(
+                session.user.email,
+                page,
+                limit,
+            );
 
         return createApiOkResponse(items, page, totalPages, totalItems);
     }

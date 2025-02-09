@@ -3,7 +3,16 @@ import { OrderItemCreateDto } from "./order-item-create.dto";
 
 export class OrderCreateDto {
     @ApiProperty()
-    userId: string;
+    email: string;
+
+    @ApiProperty()
+    phoneNumber: string;
+
+    @ApiProperty()
+    firstName: string;
+
+    @ApiProperty()
+    lastName: string;
 
     @ApiProperty()
     country: string;
@@ -17,17 +26,17 @@ export class OrderCreateDto {
     @ApiProperty()
     street: string;
 
-    @ApiProperty()
-    house: string;
+    @ApiProperty({ required: false })
+    house?: string;
 
-    @ApiProperty()
-    flat: string;
+    @ApiProperty({ required: false })
+    flat?: string;
 
-    @ApiProperty()
-    floor: string;
+    @ApiProperty({ required: false })
+    floor?: string;
 
-    @ApiProperty()
-    zip: string;
+    @ApiProperty({ required: false })
+    zip?: string;
 
     @ApiProperty()
     items: OrderItemCreateDto[];
