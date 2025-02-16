@@ -55,16 +55,16 @@ export class Order {
     @Column()
     street: string;
 
-    @Column({})
+    @Column({ nullable: true })
     house?: string;
 
-    @Column()
+    @Column({ nullable: true })
     flat?: string;
 
-    @Column()
+    @Column({ nullable: true })
     floor?: string;
 
-    @Column()
+    @Column({ nullable: true })
     zip?: string;
 
     @CreateDateColumn({
