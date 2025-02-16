@@ -109,7 +109,7 @@ export class OrdersService {
                     this.orderItemRepository.create({
                         product,
                         quantity: item.quantity ?? 1,
-                        price: product.price,
+                        price: product.discountPrice || product.price,
                     }),
                 );
             }),
