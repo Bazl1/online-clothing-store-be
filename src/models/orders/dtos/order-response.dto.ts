@@ -22,6 +22,14 @@ export class OrderResponseDto {
 
     @ApiProperty()
     @Expose()
+    email: string;
+
+    @ApiProperty()
+    @Expose()
+    phoneNumber: string;
+
+    @ApiProperty()
+    @Expose()
     state: string;
 
     @ApiProperty()
