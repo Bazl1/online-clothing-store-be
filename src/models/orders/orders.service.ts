@@ -35,7 +35,9 @@ export class OrdersService {
             },
             take: limit,
             skip: (page - 1) * limit,
-            relations: ["items", "items.product", "items.product.category"],
+            relations: {
+                items: true,
+            },
         });
 
         return {
@@ -56,11 +58,7 @@ export class OrdersService {
             take: limit,
             skip: (page - 1) * limit,
             relations: {
-                items: {
-                    product: {
-                        category: true,
-                    },
-                },
+                items: true,
             },
         });
 
@@ -79,7 +77,9 @@ export class OrdersService {
                 status: OrderStatus.Completed || OrderStatus.Cancelled,
                 id,
             },
-            relations: ["items", "items.product", "items.product.category"],
+            relations: {
+                items: true,
+            },
         });
     }
 
@@ -88,7 +88,9 @@ export class OrdersService {
             where: {
                 id,
             },
-            relations: ["items", "items.product", "items.product.category"],
+            relations: {
+                items: true,
+            },
         });
     }
 
@@ -107,7 +109,7 @@ export class OrdersService {
 
                 return this.orderItemRepository.save(
                     this.orderItemRepository.create({
-                        product,
+                        title: product.title,
                         quantity: item.quantity ?? 1,
                         price: product.discountPrice || product.price,
                     }),
@@ -133,7 +135,9 @@ export class OrdersService {
             where: {
                 id,
             },
-            relations: ["items"],
+            relations: {
+                items: true,
+            },
         });
 
         if (!order) {
@@ -144,23 +148,31 @@ export class OrdersService {
             if (
                 dto.items.every((item) => item.id && item.id !== orderItem.id)
             ) {
-                await this.orderItemRepository.delete(orderItem.product.id);
+                await this.orderItemRepository.delete(orderItem.id);
             }
         }
 
-        const items = await Promise.all(
-            dto.items.map(
-                async (item) =>
-                    new OrderItem({
-                        product: new Product({
-                            id: item.productId,
-                        }),
-                        quantity: item.quantity,
-                    }),
-            ),
-        );
+        order.items = await Promise.all(
+            dto.items.map(async (item) => {
+                const product = await this.productRepository.findOne({
+                    where: { id: item.productId },
+                });
 
-        order.items = items;
+                if (!product) {
+                    throw new Error(
+                        `Product with ID ${item.productId} not found`,
+                    );
+                }
+
+                return this.orderItemRepository.save(
+                    this.orderItemRepository.create({
+                        title: product.title,
+                        quantity: item.quantity ?? 1,
+                        price: product.discountPrice || product.price,
+                    }),
+                );
+            }),
+        );
 
         return this.orderRepository.save(order);
     }

@@ -15,9 +15,8 @@ export class OrderItem {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @ManyToOne(() => Product, { nullable: false })
-    @JoinColumn({ name: "productId" })
-    product: Product;
+    @Column()
+    title: string;
 
     @Column({ type: "int" })
     quantity: number;

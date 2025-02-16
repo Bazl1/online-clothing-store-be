@@ -9,12 +9,14 @@ import {
     Repository,
 } from "typeorm";
 import { Product } from "./product.entity";
+import { UploadsService } from "@/uploads/uploads.service";
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(Product)
         private readonly productRepository: Repository<Product>,
+        private readonly uploadsService: UploadsService,
     ) {}
 
     async create(data: Product) {
@@ -230,10 +232,26 @@ export class ProductsService {
     }
 
     async deleteMany(ids: string[]) {
+        // const product = await this.productRepository.find({
+        //     where: {
+        //         id: In(ids),
+        //     },
+        // });
+
+        // product.flatMap((p) => p.images).map(this.uploadsService.deleteFile);
+
         return this.productRepository.delete(ids);
     }
 
     async delete(id: string) {
-        await this.productRepository.delete(id);
+        // const product = await this.productRepository.findOne({
+        //     where: {
+        //         id,
+        //     },
+        // });
+
+        // product.images.map(this.uploadsService.deleteFile);
+
+        return this.productRepository.delete(id);
     }
 }

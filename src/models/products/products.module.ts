@@ -9,9 +9,11 @@ import { ProductsService } from "./products.service";
 import { ProductsController } from "./products.controller";
 import { Category } from "../categories/category.entity";
 import { ProductsClientController } from "./products.client-controller";
+import { UploadsModule } from "@/uploads/uploads.module";
 
 @Module({
     imports: [
+        UploadsModule,
         MulterModule.registerAsync({
             useClass: MulterConfigService,
             inject: [MulterConfigModule],
