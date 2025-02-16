@@ -48,7 +48,6 @@ export class OrdersService {
     async historyGetAll(email: string, page: number, limit: number) {
         const totalItems = await this.orderRepository.count({
             where: {
-                status: OrderStatus.Completed || OrderStatus.Cancelled,
                 email,
             },
         });
@@ -57,7 +56,7 @@ export class OrdersService {
 
         const items = await this.orderRepository.find({
             where: {
-                status: OrderStatus.Completed || OrderStatus.Cancelled,
+                email,
             },
             order: {
                 createdAt: "ASC",
