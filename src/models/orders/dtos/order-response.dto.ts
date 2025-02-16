@@ -30,6 +30,14 @@ export class OrderResponseDto {
 
     @ApiProperty()
     @Expose()
+    firstName: string;
+
+    @ApiProperty()
+    @Expose()
+    lastName: string;
+
+    @ApiProperty()
+    @Expose()
     state: string;
 
     @ApiProperty()
