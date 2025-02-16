@@ -5,8 +5,6 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
-    OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -27,7 +25,7 @@ export class OrderItem {
     @Column({ type: "decimal" })
     price: number;
 
-    @ManyToOne(() => Order, (order) => order.items, { nullable: false })
+    @ManyToOne(() => Order, (order) => order.items)
     order: Order;
 
     @CreateDateColumn({

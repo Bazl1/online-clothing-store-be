@@ -2,8 +2,7 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinColumn,
-    ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -15,8 +14,7 @@ export class Order {
     @PrimaryGeneratedColumn("uuid")
     id: string;
 
-    @ManyToOne(() => OrderItem, (item) => item.order)
-    @JoinColumn()
+    @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
     items: OrderItem[];
 
     @Column({

@@ -46,15 +46,7 @@ export class OrdersService {
     }
 
     async historyGetAll(email: string, page: number, limit: number) {
-        const totalItems = await this.orderRepository.count({
-            where: {
-                email,
-            },
-        });
-
-        const totalPages = Math.ceil(totalItems / limit);
-
-        const items = await this.orderRepository.find({
+        const [items, totalItems] = await this.orderRepository.findAndCount({
             where: {
                 email,
             },
@@ -63,8 +55,16 @@ export class OrdersService {
             },
             take: limit,
             skip: (page - 1) * limit,
-            relations: ["items", "items.product", "items.product.category"],
+            relations: {
+                items: {
+                    product: {
+                        category: true,
+                    },
+                },
+            },
         });
+
+        const totalPages = Math.ceil(totalItems / limit);
 
         return {
             totalItems,
@@ -93,14 +93,6 @@ export class OrdersService {
     }
 
     async create(dto: OrderCreateDto) {
-        const order = this.orderRepository.create({
-            ...dto,
-            totalPrice: 0,
-            status: OrderStatus.Pending,
-        });
-
-        await this.orderRepository.save(order);
-
         const items = await Promise.all(
             dto.items.map(async (item) => {
                 const product = await this.productRepository.findOne({
@@ -115,7 +107,6 @@ export class OrdersService {
 
                 return this.orderItemRepository.save(
                     this.orderItemRepository.create({
-                        order,
                         product,
                         quantity: item.quantity ?? 1,
                         price: product.price,
@@ -124,11 +115,15 @@ export class OrdersService {
             }),
         );
 
-        order.items = items;
-        order.totalPrice = items.reduce(
-            (acc, item) => acc + item.price * item.quantity,
-            0,
-        );
+        const order = this.orderRepository.create({
+            ...dto,
+            totalPrice: items.reduce(
+                (acc, item) => acc + item.price * item.quantity,
+                0,
+            ),
+            status: OrderStatus.Pending,
+            items,
+        });
 
         return this.orderRepository.save(order);
     }
