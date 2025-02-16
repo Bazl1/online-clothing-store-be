@@ -38,7 +38,10 @@ export class OrderHistoryController {
                 { $ref: getSchemaPath(ApiResponse) },
                 {
                     properties: {
-                        data: { $ref: getSchemaPath(OrderResponseDto) },
+                        data: {
+                            $ref: getSchemaPath(OrderResponseDto),
+                            type: "array",
+                        },
                     },
                 },
             ],
