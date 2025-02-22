@@ -1,16 +1,14 @@
-import { ProductResponseDto } from "@/models/products/dtos/product-response.dto";
 import { ApiProperty } from "@nestjs/swagger";
-import { Expose, Type } from "class-transformer";
+import { Expose } from "class-transformer";
 
 export class OrderItemResponseDto {
     @ApiProperty()
     @Expose()
     id: string;
 
-    @ApiProperty({ type: ProductResponseDto })
+    @ApiProperty()
     @Expose()
-    @Type(() => ProductResponseDto)
-    product: ProductResponseDto;
+    title: string;
 
     @ApiProperty()
     @Expose()
