@@ -56,24 +56,55 @@ export class OrdersController {
         name: "page",
         type: "number",
         required: false,
-        description: "Page number",
     })
     @ApiQuery({
         name: "limit",
         type: "number",
         required: false,
-        description: "Items per page",
+    })
+    @ApiQuery({
+        name: "email",
+        type: "string",
+        required: false,
+    })
+    @ApiQuery({
+        name: "phoneNumber",
+        type: "string",
+        required: false,
+    })
+    @ApiQuery({
+        name: "firstName",
+        type: "string",
+        required: false,
+    })
+    @ApiQuery({
+        name: "lastName",
+        type: "string",
+        required: false,
+    })
+    @ApiQuery({
+        name: "orderIds",
+        type: "array",
+        required: false,
     })
     @Get()
     @Serialize(OrderResponseDto)
     async get(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
+        @Query("email") email?: string,
+        @Query("phoneNumber") phoneNumber?: string,
+        @Query("firstName") firstName?: string,
+        @Query("lastName") lastName?: string,
         @Body("orderIds") orderIds?: string[],
     ) {
         const { totalItems, totalPages, items } = await this.ordersService.get(
             page,
             limit,
+            email,
+            phoneNumber,
+            firstName,
+            lastName,
             orderIds,
         );
 

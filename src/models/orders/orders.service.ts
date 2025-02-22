@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Order } from "./entities/order.entity";
-import { In, Repository } from "typeorm";
+import { In, Like, Repository } from "typeorm";
 import { OrderStatus } from "./entities/order-status";
 import { OrderCreateDto } from "./dtos/order-create.dto";
 import { OrderItem } from "./entities/order-item.entity";
@@ -19,17 +19,39 @@ export class OrdersService {
         private readonly productRepository: Repository<Product>,
     ) {}
 
-    async get(page: number, limit: number, orderIds?: string[]) {
-        const totalItems = await this.orderRepository.count();
+    async get(
+        page: number,
+        limit: number,
+        email?: string,
+        phoneNumber?: string,
+        firstName?: string,
+        lastName?: string,
+        orderIds?: string[],
+    ) {
+        const where = {};
 
-        const totalPages = Math.ceil(totalItems / limit);
+        if (email) {
+            where["email"] = Like(`${email}%`);
+        }
 
-        const items = await this.orderRepository.find({
-            ...(orderIds && {
-                where: {
-                    id: In(orderIds),
-                },
-            }),
+        if (phoneNumber) {
+            where["phoneNumber"] = Like(`${phoneNumber}%`);
+        }
+
+        if (firstName) {
+            where["firstName"] = Like(`${firstName}%`);
+        }
+
+        if (lastName) {
+            where["lastName"] = Like(`${lastName}%`);
+        }
+
+        if (orderIds) {
+            where["id"] = In(orderIds);
+        }
+
+        const [items, totalItems] = await this.orderRepository.findAndCount({
+            where,
             order: {
                 createdAt: "ASC",
             },
@@ -39,6 +61,8 @@ export class OrdersService {
                 items: true,
             },
         });
+
+        const totalPages = Math.ceil(totalItems / limit);
 
         return {
             totalItems,
