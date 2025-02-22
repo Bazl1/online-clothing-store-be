@@ -3,6 +3,18 @@ import { OrderItemUpdateDto } from "./order-item-update.dto";
 
 export class OrderUpdateDto {
     @ApiProperty()
+    email: string;
+
+    @ApiProperty()
+    phoneNumber: string;
+
+    @ApiProperty()
+    firstName: string;
+
+    @ApiProperty()
+    lastName: string;
+
+    @ApiProperty()
     country: string;
 
     @ApiProperty()
