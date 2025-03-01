@@ -22,28 +22,13 @@ export class OrdersService {
     async get(
         page: number,
         limit: number,
-        email?: string,
-        phoneNumber?: string,
-        firstName?: string,
-        lastName?: string,
+        search?: string,
         orderIds?: string[],
     ) {
-        const where = {};
+        const where: any = {};
 
-        if (email) {
-            where["email"] = Like(`${email}%`);
-        }
-
-        if (phoneNumber) {
-            where["phoneNumber"] = Like(`${phoneNumber}%`);
-        }
-
-        if (firstName) {
-            where["firstName"] = Like(`${firstName}%`);
-        }
-
-        if (lastName) {
-            where["lastName"] = Like(`${lastName}%`);
+        if (search) {
+            where["firstName"] = Like(`%${search}%`);
         }
 
         if (orderIds) {

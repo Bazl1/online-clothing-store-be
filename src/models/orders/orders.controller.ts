@@ -63,26 +63,6 @@ export class OrdersController {
         required: false,
     })
     @ApiQuery({
-        name: "email",
-        type: "string",
-        required: false,
-    })
-    @ApiQuery({
-        name: "phoneNumber",
-        type: "string",
-        required: false,
-    })
-    @ApiQuery({
-        name: "firstName",
-        type: "string",
-        required: false,
-    })
-    @ApiQuery({
-        name: "lastName",
-        type: "string",
-        required: false,
-    })
-    @ApiQuery({
         name: "orderIds",
         type: "array",
         required: false,
@@ -92,19 +72,13 @@ export class OrdersController {
     async get(
         @Query("page", new DefaultValuePipe(1), ParseIntPipe) page: number,
         @Query("limit", new DefaultValuePipe(10), ParseIntPipe) limit: number,
-        @Query("email") email?: string,
-        @Query("phoneNumber") phoneNumber?: string,
-        @Query("firstName") firstName?: string,
-        @Query("lastName") lastName?: string,
+        @Query("search") search?: string,
         @Body("orderIds") orderIds?: string[],
     ) {
         const { totalItems, totalPages, items } = await this.ordersService.get(
             page,
             limit,
-            email,
-            phoneNumber,
-            firstName,
-            lastName,
+            search,
             orderIds,
         );
 
