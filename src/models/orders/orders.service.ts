@@ -25,18 +25,23 @@ export class OrdersService {
         search?: string,
         orderIds?: string[],
     ) {
-        const where: any = {};
+        const where: any = [];
 
         if (search) {
-            where["firstName"] = Like(`%${search}%`);
+            where.push(
+                { firstName: Like(`${search}%`) },
+                { lastName: Like(`${search}%`) },
+                { email: Like(`${search}%`) },
+                { phoneNumber: Like(`${search}%`) },
+            );
         }
 
-        if (orderIds) {
-            where["id"] = In(orderIds);
-        }
+        const conditions = orderIds ? { id: In(orderIds) } : {};
 
         const [items, totalItems] = await this.orderRepository.findAndCount({
-            where,
+            where: search
+                ? where.map((item) => ({ ...item, ...conditions }))
+                : conditions,
             order: {
                 createdAt: "ASC",
             },

@@ -63,6 +63,11 @@ export class OrdersController {
         required: false,
     })
     @ApiQuery({
+        name: "search",
+        type: "string",
+        required: false,
+    })
+    @ApiQuery({
         name: "orderIds",
         type: "array",
         required: false,
